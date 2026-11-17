@@ -316,11 +316,10 @@ class _Thumb extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final repo = ref.read(attachmentsRepositoryProvider);
-    return FutureBuilder<File>(
-      future: repo.fileOf(a),
-      builder: (context, snap) {
-        final file = snap.data;
+    final bytesAsync = ref.watch(attachmentBytesProvider(a));
+    return Builder(
+      builder: (context) {
+        final file = bytesAsync.asData?.value;
         return Stack(
           children: [
             InkWell(
@@ -330,7 +329,7 @@ class _Thumb extends ConsumerWidget {
                       context: context,
                       builder: (_) => Dialog(
                         child: InteractiveViewer(
-                          child: Image.file(
+                          child: Image.memory(
                             file,
                             errorBuilder: (_, _, _) => const Padding(
                               padding: EdgeInsets.all(24),
@@ -348,7 +347,7 @@ class _Thumb extends ConsumerWidget {
                         height: 96,
                         child: Center(child: CircularProgressIndicator()),
                       )
-                    : Image.file(
+                    : Image.memory(
                         file,
                         width: 96,
                         height: 96,
@@ -368,7 +367,9 @@ class _Thumb extends ConsumerWidget {
                 child: InkWell(
                   onTap: () async {
                     try {
-                      await repo.remove(a.id);
+                      await ref
+                          .read(attachmentsRepositoryProvider)
+                          .remove(a.id);
                     } on PaymentException catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context)

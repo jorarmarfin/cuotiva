@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../core/database/app_database.dart';
 import '../../../core/database/audit_service.dart';
+import '../../../core/security/crypto_service.dart';
 import '../domain/payment_errors.dart';
 
 /// Comprobantes de pago. El archivo se copia al almacenamiento privado de la
@@ -18,8 +19,9 @@ class AttachmentsRepository {
     this._audit,
     this._uuid,
     this._clock,
-    this._rootDir,
-  );
+    this._rootDir, [
+    this._cipher,
+  ]);
 
   final AppDatabase _db;
   final AuditService _audit;
@@ -28,6 +30,9 @@ class AttachmentsRepository {
 
   /// Directorio privado donde viven los adjuntos (inyectable para tests).
   final Future<Directory> Function() _rootDir;
+
+  /// AES-GCM para cifrar en disco; sin él (tests) se guarda en claro.
+  final Future<AeadCipher> Function()? _cipher;
 
   static const maxBytes = 10 * 1024 * 1024;
   static const _extByMime = {
@@ -85,10 +90,16 @@ class AttachmentsRepository {
     final relative = p.join('attachments', '$id.$ext');
     final dest = File(p.join(root.path, relative));
     await dest.parent.create(recursive: true);
-    await source.copy(dest.path);
+    final plain = await source.readAsBytes();
+    // El checksum es del contenido original: sirve para verificar tras descifrar.
+    final checksum = sha256.convert(plain).toString();
+    final cipher = await _cipher?.call();
+    await dest.writeAsBytes(
+      cipher == null ? plain : await cipher.encrypt(plain, aad: id.codeUnits),
+      flush: true,
+    );
 
     try {
-      final checksum = (await sha256.bind(dest.openRead()).first).toString();
       final now = _clock();
       return await _db.transaction(() async {
         await _db
@@ -103,6 +114,7 @@ class AttachmentsRepository {
                 mimeType: mime,
                 byteSize: size,
                 checksum: checksum,
+                encrypted: Value(cipher != null),
               ),
             );
         await _audit.log(
@@ -155,10 +167,58 @@ class AttachmentsRepository {
     if (await f.exists()) await f.delete();
   }
 
-  /// Verifica que el archivo exista y coincida con el checksum guardado.
+  /// Contenido original del comprobante (descifrado si hace falta).
+  Future<Uint8List> readBytes(Attachment a) async {
+    final raw = await (await fileOf(a)).readAsBytes();
+    if (!a.encrypted) return raw;
+    final cipher = await _cipher?.call();
+    if (cipher == null) {
+      throw PaymentException('No hay clave para descifrar el comprobante');
+    }
+    return cipher.decrypt(raw, aad: a.id.codeUnits);
+  }
+
+  /// Cifra los comprobantes que quedaron en claro (versiones previas al
+  /// cifrado). Devuelve cuántos cifró. Escribe a un temporal y renombra.
+  Future<int> encryptPending() async {
+    final cipher = await _cipher?.call();
+    if (cipher == null) return 0;
+    final pending = await (_db.select(
+      _db.attachments,
+    )..where((a) => a.encrypted.equals(false))).get();
+    var n = 0;
+    for (final a in pending) {
+      final f = await fileOf(a);
+      if (!await f.exists()) continue;
+      final plain = await f.readAsBytes();
+      if (sha256.convert(plain).toString() != a.checksum) continue; // dañado
+      final tmp = File('${f.path}.tmp');
+      await tmp.writeAsBytes(
+        await cipher.encrypt(plain, aad: a.id.codeUnits),
+        flush: true,
+      );
+      await tmp.rename(f.path);
+      await (_db.update(
+        _db.attachments,
+      )..where((x) => x.id.equals(a.id))).write(
+        AttachmentsCompanion(
+          encrypted: const Value(true),
+          updatedAt: Value(_clock()),
+        ),
+      );
+      n++;
+    }
+    return n;
+  }
+
+  /// Verifica que el archivo exista y que, ya descifrado, coincida con el
+  /// checksum guardado (detecta pérdida o alteración).
   Future<bool> verify(Attachment a) async {
-    final f = await fileOf(a);
-    if (!await f.exists()) return false;
-    return (await sha256.bind(f.openRead()).first).toString() == a.checksum;
+    try {
+      if (!await (await fileOf(a)).exists()) return false;
+      return sha256.convert(await readBytes(a)).toString() == a.checksum;
+    } on CryptoException {
+      return false;
+    }
   }
 }

@@ -49,3 +49,8 @@ class DbKeyService {
     return hex;
   }
 }
+
+List<int> hexToBytes(String hex) => [
+  for (var i = 0; i < hex.length; i += 2)
+    int.parse(hex.substring(i, i + 2), radix: 16),
+];

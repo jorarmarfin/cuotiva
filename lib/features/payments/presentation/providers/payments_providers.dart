@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/database/app_database.dart';
@@ -29,4 +31,9 @@ final paymentProvider = StreamProvider.family<Payment?, String>(
 final paymentAuditProvider = StreamProvider.family<List<AuditLog>, String>(
   (ref, paymentId) =>
       ref.watch(auditServiceProvider).watchFor('payment', paymentId),
+);
+
+/// Bytes del comprobante ya descifrados (se cachea por adjunto).
+final attachmentBytesProvider = FutureProvider.family<Uint8List, Attachment>(
+  (ref, a) => ref.watch(attachmentsRepositoryProvider).readBytes(a),
 );

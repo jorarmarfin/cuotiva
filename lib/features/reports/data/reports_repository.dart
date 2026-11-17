@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
 import 'package:image/image.dart' as img;
-import 'package:path/path.dart' as p;
 
 import '../../../core/database/app_database.dart';
+import '../../payments/data/attachments_repository.dart';
 import '../../receivables/domain/balance_calculator.dart';
 import '../../receivables/domain/status_labels.dart';
 import '../domain/report_models.dart';
@@ -12,13 +10,13 @@ import '../domain/report_models.dart';
 /// Arma los datos de los PDF a partir de la base. Solo lectura: no modifica
 /// nada. Los movimientos confirmados y los pendientes van separados.
 class ReportsRepository {
-  ReportsRepository(this._db, this._clock, [this._attachmentsRoot]);
+  ReportsRepository(this._db, this._clock, [this._attachments]);
 
   final AppDatabase _db;
   final DateTime Function() _clock;
 
-  /// Directorio privado de adjuntos; sin él no se incluyen imágenes.
-  final Future<Directory> Function()? _attachmentsRoot;
+  /// Lee (y descifra) comprobantes; sin él no se incluyen imágenes.
+  final AttachmentsRepository? _attachments;
 
   static const _maxImageSide = 800;
 
@@ -39,9 +37,8 @@ class ReportsRepository {
   }
 
   Future<List<Uint8List>> _images(List<String> paymentIds) async {
-    final root = _attachmentsRoot;
-    if (root == null || paymentIds.isEmpty) return const [];
-    final dir = (await root()).path;
+    final repo = _attachments;
+    if (repo == null || paymentIds.isEmpty) return const [];
     final atts =
         await (_db.select(_db.attachments)
               ..where((a) => a.paymentId.isIn(paymentIds))
@@ -49,10 +46,12 @@ class ReportsRepository {
             .get();
     final out = <Uint8List>[];
     for (final a in atts) {
-      final f = File(p.join(dir, a.relativePath));
-      if (!await f.exists()) continue;
-      final small = shrink(await f.readAsBytes());
-      if (small != null) out.add(small);
+      try {
+        final small = shrink(await repo.readBytes(a));
+        if (small != null) out.add(small);
+      } on Object {
+        continue; // archivo ausente o dañado: se omite en el PDF
+      }
     }
     return out;
   }

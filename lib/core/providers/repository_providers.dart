@@ -12,6 +12,8 @@ import '../../features/reports/data/reports_repository.dart';
 import '../../features/settlements/data/settlements_repository.dart';
 import '../../features/spaces/data/spaces_repository.dart';
 import '../database/audit_service.dart';
+import '../security/crypto_service.dart';
+import '../security/db_key_service.dart';
 import 'core_providers.dart';
 
 final auditServiceProvider = Provider<AuditService>(
@@ -67,6 +69,13 @@ final installmentsRepositoryProvider = Provider<InstallmentsRepository>(
   ),
 );
 
+/// Subclave de adjuntos derivada de la clave de la base (obtenida al usarla).
+final attachmentCipherProvider = Provider<Future<AeadCipher> Function()>((ref) {
+  final keys = ref.watch(dbKeyServiceProvider);
+  return () async =>
+      AeadCipher.derive(hexToBytes(await keys.getOrCreate()), 'attachments');
+});
+
 final attachmentsRepositoryProvider = Provider<AttachmentsRepository>(
   (ref) => AttachmentsRepository(
     ref.watch(appDatabaseProvider),
@@ -75,6 +84,8 @@ final attachmentsRepositoryProvider = Provider<AttachmentsRepository>(
     ref.watch(clockProvider),
     // Almacenamiento privado de la app (no visible en la galería).
     getApplicationSupportDirectory,
+    // Cifrado en disco con subclave derivada de la clave de la base.
+    ref.watch(attachmentCipherProvider),
   ),
 );
 
@@ -109,6 +120,6 @@ final reportsRepositoryProvider = Provider<ReportsRepository>(
   (ref) => ReportsRepository(
     ref.watch(appDatabaseProvider),
     ref.watch(clockProvider),
-    getApplicationSupportDirectory,
+    ref.watch(attachmentsRepositoryProvider),
   ),
 );

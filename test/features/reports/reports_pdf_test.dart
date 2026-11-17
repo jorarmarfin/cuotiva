@@ -220,7 +220,7 @@ void main() {
     const uuid = Uuid();
     final audit = AuditService(db, uuid, clock);
     final atts = AttachmentsRepository(db, audit, uuid, clock, () async => tmp);
-    final repo = ReportsRepository(db, clock, () async => tmp);
+    final repo = ReportsRepository(db, clock, atts);
 
     final big = img.Image(width: 2000, height: 1000);
     final src = File('${tmp.path}/foto.png')

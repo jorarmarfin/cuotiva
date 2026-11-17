@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 4 — Seguridad y cierre V1
 - **Progreso**: 4 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: Fase 4 — cifrado de adjuntos en disco, luego respaldo/restauración cifrado, notificaciones, onboarding
+- **Próximo paso concreto**: Fase 4 — respaldo/restauración cifrado (frase de recuperación), notificaciones, onboarding
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -219,7 +219,7 @@
 - [x] Decisión documentada (ADR 0004) y migración a SQLite cifrado (SQLCipher validado con Drift); clave en `flutter_secure_storage`
 - [x] PIN con derivación robusta (PBKDF2-HMAC-SHA256 150k it. + sal, bloqueo escalonado); biometría con `local_auth`
 - [x] Bloqueo al volver de segundo plano, período de gracia configurable, FLAG_SECURE opcional
-- [ ] Cifrado de adjuntos en disco
+- [x] Cifrado de adjuntos en disco (AES-256-GCM, AAD = id, subclave HKDF-like de la clave de BD; cifra comprobantes heredados al arrancar)
 - [ ] Onboarding: explicación, PIN, biometría opcional, primer espacio
 
 #### Respaldo
@@ -235,7 +235,7 @@
 - [ ] Accesibilidad (contraste, tamaños, semántica) y revisión de estados vacío/error/cancelación
 
 #### Tests
-- [~] Unit: KDF/PIN y cifrado de BD hechos; cifrado/integridad de respaldo y adjuntos pendientes
+- [~] Unit: KDF/PIN y cifrado de BD hechos; cifrado AEAD y adjuntos hechos; integridad de respaldo pendiente
 - [ ] Integración: flujos 10-12 de §12 (reabrir app, backup→restaurar con hashes, migración de esquema)
 - [ ] Prueba en dispositivo Android físico offline (criterio MVP)
 
@@ -249,6 +249,7 @@
 - Restauración fallida a medias → restaurar a ubicación temporal y swap atómico.
 
 ### Notas de avance
+- 2026-11-17: `AeadCipher` (AES-GCM), adjuntos cifrados en disco + `encryptPending` + lectura descifrada en UI y PDF (+11 tests).
 - 2026-11-17: PIN (`PinService`, PBKDF2 en isolate, 9 tests), `AppLockController`/`LockGate`/`LockScreen` (gracia, biometría, FLAG_SECURE por MethodChannel), Ajustes > Seguridad (+7 tests). MainActivity ahora FlutterFragmentActivity y temas AppCompat (requisito local_auth). APK debug OK. Falta probar biometría y PBKDF2 (tiempo) en dispositivo real.
 - 2026-11-17: spike SQLCipher OK (host y APK debug). `openEncrypted` + `DbKeyService` + migración plano→cifrado (+5 tests). `AppDatabase` ya no abre SQLite plano por defecto.
 

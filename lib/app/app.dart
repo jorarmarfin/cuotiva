@@ -1,29 +1,41 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/constants/app_constants.dart';
+import '../core/providers/repository_providers.dart';
 import '../core/router/app_router.dart';
 import '../core/theme/app_theme.dart';
 import '../core/update/app_update_service.dart';
 import '../core/widgets/lock_screen.dart';
 
-class CuotivaApp extends StatefulWidget {
+class CuotivaApp extends ConsumerStatefulWidget {
   const CuotivaApp({super.key});
 
   @override
-  State<CuotivaApp> createState() => _CuotivaAppState();
+  ConsumerState<CuotivaApp> createState() => _CuotivaAppState();
 }
 
-class _CuotivaAppState extends State<CuotivaApp> {
+class _CuotivaAppState extends ConsumerState<CuotivaApp> {
   @override
   void initState() {
     super.initState();
     // Tras el primer frame, sin bloquear el arranque.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(AppUpdateService.instance.checkAndDownload());
+      // Comprobantes de versiones previas al cifrado.
+      unawaited(_encryptPending());
     });
+  }
+
+  Future<void> _encryptPending() async {
+    try {
+      await ref.read(attachmentsRepositoryProvider).encryptPending();
+    } on Object {
+      // No bloquea el arranque; se reintenta en el próximo inicio.
+    }
   }
 
   @override

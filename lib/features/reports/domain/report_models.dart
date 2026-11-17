@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 /// Opciones de privacidad/contenido del estado de cuenta (CUOTIVA_SPEC §9).
 class StatementOptions {
   const StatementOptions({
@@ -5,6 +7,7 @@ class StatementOptions {
     this.includeInstallments = true,
     this.includeNotes = false,
     this.includePending = true,
+    this.includeAttachments = false,
   });
 
   final bool includePhone;
@@ -14,16 +17,21 @@ class StatementOptions {
   final bool includeNotes;
   final bool includePending;
 
+  /// Comprobantes (imágenes) de los pagos confirmados, redimensionados.
+  final bool includeAttachments;
+
   StatementOptions copyWith({
     bool? includePhone,
     bool? includeInstallments,
     bool? includeNotes,
     bool? includePending,
+    bool? includeAttachments,
   }) => StatementOptions(
     includePhone: includePhone ?? this.includePhone,
     includeInstallments: includeInstallments ?? this.includeInstallments,
     includeNotes: includeNotes ?? this.includeNotes,
     includePending: includePending ?? this.includePending,
+    includeAttachments: includeAttachments ?? this.includeAttachments,
   );
 }
 
@@ -68,6 +76,7 @@ class StatementData {
     required this.pending,
     required this.installments,
     required this.issuedAt,
+    this.images = const [],
     this.phone,
     this.notes,
   });
@@ -86,6 +95,9 @@ class StatementData {
   final List<StatementMovement> pending;
   final List<StatementInstallment> installments;
   final DateTime issuedAt;
+
+  /// JPEG ya redimensionados de los comprobantes de pagos confirmados.
+  final List<Uint8List> images;
   final String? phone;
   final String? notes;
 }

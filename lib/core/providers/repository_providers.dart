@@ -109,5 +109,6 @@ final reportsRepositoryProvider = Provider<ReportsRepository>(
   (ref) => ReportsRepository(
     ref.watch(appDatabaseProvider),
     ref.watch(clockProvider),
+    getApplicationSupportDirectory,
   ),
 );

@@ -52,6 +52,11 @@ class _State extends ConsumerState<StatementPreviewScreen> {
               (v) => _options.copyWith(includeInstallments: v),
             ),
             chip(
+              'Comprobantes',
+              _options.includeAttachments,
+              (v) => _options.copyWith(includeAttachments: v),
+            ),
+            chip(
               'Pendientes',
               _options.includePending,
               (v) => _options.copyWith(includePending: v),
@@ -62,7 +67,10 @@ class _State extends ConsumerState<StatementPreviewScreen> {
       buildPdf: () async {
         final data = await ref
             .read(reportsRepositoryProvider)
-            .statementFor(widget.receivableId);
+            .statementFor(
+              widget.receivableId,
+              includeAttachments: _options.includeAttachments,
+            );
         _name = 'estado_de_cuenta_${data.personName}';
         return buildStatementPdf(data, options: _options);
       },

@@ -11,10 +11,10 @@
 - **Timeline estimado**: ~5 semanas (2-5 días por fase)
 
 ## Estado Actual
-- **Fase activa**: Fase 3 — Documentos y rendiciones (casi completa)
-- **Progreso**: 3 de 6 fases completadas (Fase 3 en cierre)
+- **Fase activa**: Fase 4 — Seguridad y cierre V1
+- **Progreso**: 4 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: cerrar Fase 3 (adjuntos en PDF redimensionados + prueba de compartir en dispositivo) y empezar Fase 4 con el spike SQLCipher/Drift
+- **Próximo paso concreto**: Fase 4 — spike 0.5 día SQLCipher + Drift (ADR), luego PIN/KDF
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -159,7 +159,7 @@
 
 ---
 
-## Fase 3: Documentos y rendiciones — CASI COMPLETA (falta: adjuntos en PDF, prueba en dispositivo)
+## Fase 3: Documentos y rendiciones — COMPLETADA (pendiente solo prueba manual de compartir en dispositivo)
 
 **Duración estimada**: 4 días
 **Objetivo**: PDFs de estado de cuenta y de campaña, compartir por sistema, fondos de terceros y rendiciones.
@@ -177,7 +177,7 @@
 
 #### PDF / compartir
 - [x] `core/pdf`: estado de cuenta individual (cabecera, movimientos confirmados, saldo, sección separada de pendientes, nota no tributaria, A4 con paginación)
-- [~] Opciones: teléfono, notas internas, cuotas y pendientes listas; **adjuntos (imágenes) en el PDF pendiente**
+- [x] Opciones: teléfono, notas internas, cuotas, pendientes y comprobantes (redimensionados a 800 px, JPEG)
 - [x] Reporte de campaña (comprometido/recaudado/pendiente/vencido; recaudado/entregado/por entregar para terceros)
 - [x] Compartir con `share_plus` (hoja nativa/WhatsApp) + advertencia de datos personales
 
@@ -200,6 +200,7 @@
 ### Notas de avance
 - 2026-11-17: esquema v3 + `SettlementsRepository` (6 tests), UI Rendiciones, bloque en detalle de cobro; anular pago bloqueado si deja lo entregado sin respaldo.
 - 2026-11-17: `core/pdf` (estado de cuenta, reporte de cobro; Helvetica Latin-1 con `pdfSafe`), `ReportsRepository`, vista previa + compartir con advertencia, pantalla Reportes (+5 tests PDF). 138 tests, analyze limpio. Flujo 7 (hoja nativa) requiere prueba manual en dispositivo.
+- 2026-11-17: comprobantes en PDF (paquete `image`, reducción a 800 px) con opción en la vista previa (+1 test).
 
 ---
 

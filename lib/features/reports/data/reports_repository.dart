@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
+import 'package:image/image.dart' as img;
+import 'package:path/path.dart' as p;
 
 import '../../../core/database/app_database.dart';
 import '../../receivables/domain/balance_calculator.dart';
@@ -8,10 +12,50 @@ import '../domain/report_models.dart';
 /// Arma los datos de los PDF a partir de la base. Solo lectura: no modifica
 /// nada. Los movimientos confirmados y los pendientes van separados.
 class ReportsRepository {
-  ReportsRepository(this._db, this._clock);
+  ReportsRepository(this._db, this._clock, [this._attachmentsRoot]);
 
   final AppDatabase _db;
   final DateTime Function() _clock;
+
+  /// Directorio privado de adjuntos; sin él no se incluyen imágenes.
+  final Future<Directory> Function()? _attachmentsRoot;
+
+  static const _maxImageSide = 800;
+
+  /// Reduce a [_maxImageSide] px y recodifica a JPEG para acotar el tamaño
+  /// del PDF. Devuelve null si el archivo no se puede leer.
+  static Uint8List? shrink(Uint8List bytes) {
+    final decoded = img.decodeImage(bytes);
+    if (decoded == null) return null;
+    final big = decoded.width > decoded.height ? decoded.width : decoded.height;
+    final out = big > _maxImageSide
+        ? img.copyResize(
+            decoded,
+            width: decoded.width >= decoded.height ? _maxImageSide : null,
+            height: decoded.height > decoded.width ? _maxImageSide : null,
+          )
+        : decoded;
+    return Uint8List.fromList(img.encodeJpg(out, quality: 70));
+  }
+
+  Future<List<Uint8List>> _images(List<String> paymentIds) async {
+    final root = _attachmentsRoot;
+    if (root == null || paymentIds.isEmpty) return const [];
+    final dir = (await root()).path;
+    final atts =
+        await (_db.select(_db.attachments)
+              ..where((a) => a.paymentId.isIn(paymentIds))
+              ..orderBy([(a) => OrderingTerm.asc(a.createdAt)]))
+            .get();
+    final out = <Uint8List>[];
+    for (final a in atts) {
+      final f = File(p.join(dir, a.relativePath));
+      if (!await f.exists()) continue;
+      final small = shrink(await f.readAsBytes());
+      if (small != null) out.add(small);
+    }
+    return out;
+  }
 
   Balance _balance(Receivable r, List<Payment> pays) =>
       BalanceCalculator.receivable(
@@ -25,7 +69,10 @@ class ReportsRepository {
         now: _clock(),
       );
 
-  Future<StatementData> statementFor(String receivableId) async {
+  Future<StatementData> statementFor(
+    String receivableId, {
+    bool includeAttachments = false,
+  }) async {
     final r = await (_db.select(
       _db.receivables,
     )..where((x) => x.id.equals(receivableId))).getSingle();
@@ -97,6 +144,12 @@ class ReportsRepository {
           ),
       ],
       issuedAt: _clock(),
+      images: includeAttachments
+          ? await _images([
+              for (final p in pays)
+                if (p.status == 'confirmed') p.id,
+            ])
+          : const [],
     );
   }
 

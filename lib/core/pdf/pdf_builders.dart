@@ -201,6 +201,17 @@ Future<Uint8List> buildStatementPdf(
             ],
           ),
         ],
+        if (options.includeAttachments && s.images.isNotEmpty) ...[
+          _section('Comprobantes'),
+          pw.Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final img in s.images)
+                pw.Image(pw.MemoryImage(img), width: 150, height: 150),
+            ],
+          ),
+        ],
         pw.SizedBox(height: 18),
         pw.Text(
           pdfSafe(statementDisclaimer),

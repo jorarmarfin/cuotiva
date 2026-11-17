@@ -15,6 +15,7 @@ Opciones (chips en la vista previa):
 | Teléfono | no | Muestra el teléfono de la persona |
 | Notas internas | no | Muestra las notas de la obligación |
 | Cuotas | sí | Tabla de cuotas con lo pagado en cada una |
+| Comprobantes | no | Imágenes de pagos confirmados, reducidas a 800 px (JPEG) |
 | Pendientes | sí | Sección aparte «Pendientes de verificación (no descuentan saldo)» |
 
 Los pagos rechazados y anulados nunca aparecen.

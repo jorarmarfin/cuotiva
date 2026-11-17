@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cuotiva/core/database/app_database.dart';
 import 'package:cuotiva/core/database/audit_service.dart';
@@ -9,6 +10,8 @@ import 'package:cuotiva/features/collections/data/collections_repository.dart';
 import 'package:cuotiva/features/contacts/data/contacts_repository.dart';
 import 'package:cuotiva/features/payments/data/payments_repository.dart';
 import 'package:cuotiva/features/receivables/data/receivables_repository.dart';
+import 'package:cuotiva/features/payments/data/attachments_repository.dart';
+import 'package:image/image.dart' as img;
 import 'package:cuotiva/features/reports/data/reports_repository.dart';
 import 'package:cuotiva/features/reports/domain/report_models.dart';
 import 'package:cuotiva/features/settlements/data/settlements_repository.dart';
@@ -210,5 +213,45 @@ void main() {
   test('pdfSafe reemplaza emojis y símbolos fuera de Latin-1', () {
     expect(pdfSafe('Niño – Ñandú 😀'), 'Niño - Ñandú ?');
     expect(pdfSafe('S/ 1,200.00'), 'S/ 1,200.00');
+  });
+  test('comprobantes: se reducen y solo van al PDF si se piden', () async {
+    final tmp = await Directory.systemTemp.createTemp('cuotiva_att');
+    addTearDown(() => tmp.delete(recursive: true));
+    const uuid = Uuid();
+    final audit = AuditService(db, uuid, clock);
+    final atts = AttachmentsRepository(db, audit, uuid, clock, () async => tmp);
+    final repo = ReportsRepository(db, clock, () async => tmp);
+
+    final big = img.Image(width: 2000, height: 1000);
+    final src = File('${tmp.path}/foto.png')
+      ..writeAsBytesSync(img.encodePng(big));
+    final c = await contacts.create(displayName: 'Eva');
+    final col = await collections.create(spaceId: space.id, title: 'Y');
+    final r = await receivables.create(
+      collectionId: col.id,
+      contactId: c.id,
+      principal: Money.parse('100'),
+    );
+    final pay = await payments.register(
+      receivableId: r.id,
+      amount: Money.parse('10'),
+    );
+    await atts.add(paymentId: pay.id, source: src);
+
+    expect((await repo.statementFor(r.id)).images, isEmpty);
+    final data = await repo.statementFor(r.id, includeAttachments: true);
+    expect(data.images, hasLength(1));
+    final out = img.decodeJpg(data.images.single)!;
+    expect(out.width, 800);
+    expect(out.height, 400);
+
+    final withImg = await buildStatementPdf(
+      data,
+      compress: false,
+      options: const StatementOptions(includeAttachments: true),
+    );
+    final without = await buildStatementPdf(data, compress: false);
+    expect(text(withImg), contains('Comprobantes'));
+    expect(text(without), isNot(contains('Comprobantes')));
   });
 }

@@ -1,17 +1,21 @@
-# cuotiva
+# Cuotiva
 
-A new Flutter project.
+*Cada cuota cuenta.* App Android (Flutter), local-first y mono-usuario, para controlar cobros, cuotas y abonos.
 
-## Getting Started
+- Spec: [`spec/CUOTIVA_SPEC.md`](spec/CUOTIVA_SPEC.md)
+- Plan de fases y estado: [`.claude/spec-plan.md`](.claude/spec-plan.md)
+- Decisiones: [`docs/adr/`](docs/adr/)
 
-This project is a starting point for a Flutter application.
+## Comandos
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs   # código Drift
+flutter analyze
+flutter test
+flutter run            # o ./run.sh
+./scripts/build_release.sh apk        # release ofuscado
+./scripts/build_release.sh appbundle
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+No se guardan credenciales de firma en el repositorio.

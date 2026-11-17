@@ -25,19 +25,39 @@ class MainShell extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _item(context, 0, Icons.home_outlined, Icons.home, 'Inicio'),
-            _item(context, 1, Icons.assignment_outlined, Icons.assignment, 'Cobros'),
+            _item(
+              context,
+              1,
+              Icons.assignment_outlined,
+              Icons.assignment,
+              'Cobros',
+            ),
             const SizedBox(width: 48),
             _item(context, 2, Icons.people_outline, Icons.people, 'Personas'),
-            _item(context, 3, Icons.bar_chart_outlined, Icons.bar_chart, 'Reportes'),
+            _item(
+              context,
+              3,
+              Icons.bar_chart_outlined,
+              Icons.bar_chart,
+              'Reportes',
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _item(BuildContext context, int i, IconData icon, IconData active, String label) {
+  Widget _item(
+    BuildContext context,
+    int i,
+    IconData icon,
+    IconData active,
+    String label,
+  ) {
     final selected = shell.currentIndex == i;
-    final color = selected ? Theme.of(context).colorScheme.primary : Colors.black54;
+    final color = selected
+        ? Theme.of(context).colorScheme.primary
+        : Colors.black54;
     return InkWell(
       onTap: () => shell.goBranch(i, initialLocation: i == shell.currentIndex),
       child: Padding(

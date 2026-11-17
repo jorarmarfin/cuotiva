@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/constants/app_constants.dart';
 
@@ -36,17 +37,25 @@ class CreditsScreen extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.surface,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.favorite_rounded, color: AppColors.brand, size: 22),
+                    child: const Icon(
+                      Icons.favorite_rounded,
+                      color: AppColors.brand,
+                      size: 22,
+                    ),
                   ),
                   const SizedBox(width: 14),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Gracias por usar Cuotiva y apoyar el orden de tus cobros.',
-                      style: const TextStyle(fontSize: 14, color: AppColors.text, height: 1.4),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.text,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ],
@@ -56,10 +65,13 @@ class CreditsScreen extends StatelessWidget {
           const SizedBox(height: 20),
 
           // ── Desarrollador ───────────────────────────────────────────────────
-          FadeInDown(delay: const Duration(milliseconds: 80), child: _SectionLabel(label: 'Desarrollador')),
+          FadeInDown(
+            delay: const Duration(milliseconds: 80),
+            child: const _SectionLabel(label: 'Desarrollador'),
+          ),
           FadeInDown(
             delay: const Duration(milliseconds: 100),
-            child: _CreditTile(
+            child: const _CreditTile(
               icon: Icons.code_rounded,
               title: 'Ing. Software',
               subtitle: 'Luis Fernando Mayta Campos',
@@ -77,10 +89,13 @@ class CreditsScreen extends StatelessWidget {
           ),
 
           // ── Tecnología ──────────────────────────────────────────────────────
-          FadeInDown(delay: const Duration(milliseconds: 160), child: _SectionLabel(label: 'Tecnología')),
+          FadeInDown(
+            delay: const Duration(milliseconds: 160),
+            child: const _SectionLabel(label: 'Tecnología'),
+          ),
           FadeInDown(
             delay: const Duration(milliseconds: 180),
-            child: _CreditTile(
+            child: const _CreditTile(
               icon: Icons.flutter_dash_rounded,
               title: 'Framework',
               subtitle: 'Flutter',
@@ -88,7 +103,7 @@ class CreditsScreen extends StatelessWidget {
           ),
           FadeInDown(
             delay: const Duration(milliseconds: 200),
-            child: _CreditTile(
+            child: const _CreditTile(
               icon: Icons.data_object_rounded,
               title: 'Lenguaje',
               subtitle: 'Dart',
@@ -96,7 +111,7 @@ class CreditsScreen extends StatelessWidget {
           ),
           FadeInDown(
             delay: const Duration(milliseconds: 220),
-            child: _CreditTile(
+            child: const _CreditTile(
               icon: Icons.design_services_rounded,
               title: 'Diseño',
               subtitle: 'Material 3 y arquitectura modular por features',
@@ -117,7 +132,9 @@ class CreditsScreen extends StatelessWidget {
                   foregroundColor: AppColors.brand,
                   side: const BorderSide(color: AppColors.brand),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -127,11 +144,11 @@ class CreditsScreen extends StatelessWidget {
           const SizedBox(height: 32),
           FadeInUp(
             delay: const Duration(milliseconds: 300),
-            child: Center(
+            child: const Center(
               child: Text(
                 'Hecho con cariño para que cada cuota cuente.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: AppColors.brand,
                   fontWeight: FontWeight.w600,
@@ -144,14 +161,21 @@ class CreditsScreen extends StatelessWidget {
             delay: const Duration(milliseconds: 320),
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.brandLight,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
                   'v${AppConstants.appVersion}',
-                  style: TextStyle(fontSize: 12, color: Colors.black54, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -163,16 +187,21 @@ class CreditsScreen extends StatelessWidget {
   }
 
   void _shareApp() {
-    SharePlus.instance.share(ShareParams(
-      text: 'Descarga Cuotiva — organiza tus cobros, cuotas y abonos.\n'
-          'https://play.google.com/store/apps/details?id=com.luisitomayta.cuotiva',
-      subject: 'Cuotiva',
-    ));
+    SharePlus.instance.share(
+      ShareParams(
+        text:
+            'Descarga Cuotiva — organiza tus cobros, cuotas y abonos.\n'
+            'https://play.google.com/store/apps/details?id=com.luisitomayta.cuotiva',
+        subject: 'Cuotiva',
+      ),
+    );
   }
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 }
 
@@ -223,7 +252,10 @@ class _CreditTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: Icon(icon, color: AppColors.brand, size: 22),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+        ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
@@ -232,7 +264,13 @@ class _CreditTile extends StatelessWidget {
             decoration: isLink ? TextDecoration.underline : null,
           ),
         ),
-        trailing: onTap != null ? const Icon(Icons.open_in_new_rounded, size: 16, color: Colors.black54) : null,
+        trailing: onTap != null
+            ? const Icon(
+                Icons.open_in_new_rounded,
+                size: 16,
+                color: Colors.black54,
+              )
+            : null,
         onTap: onTap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

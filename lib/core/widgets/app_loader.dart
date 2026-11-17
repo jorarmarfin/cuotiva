@@ -7,9 +7,9 @@ class AppLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: LoadingAnimationWidget.fourRotatingDots(
-          color: Theme.of(context).colorScheme.primary,
-          size: size,
-        ),
-      );
+    child: LoadingAnimationWidget.fourRotatingDots(
+      color: Theme.of(context).colorScheme.primary,
+      size: size,
+    ),
+  );
 }

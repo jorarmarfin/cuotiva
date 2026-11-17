@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
 
 /// Theme Material 3 generado por seed color — se deriva automaticamente
@@ -11,16 +12,17 @@ abstract final class AppTheme {
   static ThemeData get dark => _build(Brightness.dark);
 
   static ThemeData _build(Brightness brightness) {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brand,
-      brightness: brightness,
-    ).copyWith(
-      primary: AppColors.brand,
-      secondary: AppColors.brandDark,
-      tertiary: AppColors.mint,
-      surface: brightness == Brightness.light ? AppColors.surface : null,
-      onSurface: brightness == Brightness.light ? AppColors.text : null,
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.brand,
+          brightness: brightness,
+        ).copyWith(
+          primary: AppColors.brand,
+          secondary: AppColors.brandDark,
+          tertiary: AppColors.mint,
+          surface: brightness == Brightness.light ? AppColors.surface : null,
+          onSurface: brightness == Brightness.light ? AppColors.text : null,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -32,7 +34,7 @@ abstract final class AppTheme {
             ? ThemeData.dark().textTheme
             : ThemeData.light().textTheme,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.brand,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -48,7 +50,9 @@ abstract final class AppTheme {
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

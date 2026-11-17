@@ -88,7 +88,12 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final biometric = ref.watch(appLockProvider).settings.biometric;
-    Widget key(String label, {VoidCallback? onTap, IconData? icon}) => Padding(
+    Widget key(
+      String label, {
+      VoidCallback? onTap,
+      IconData? icon,
+      String? semantics,
+    }) => Padding(
       padding: const EdgeInsets.all(6),
       child: SizedBox(
         width: 72,
@@ -96,7 +101,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
         child: TextButton(
           onPressed: onTap,
           child: icon != null
-              ? Icon(icon)
+              ? Icon(icon, semanticLabel: semantics)
               : Text(label, style: const TextStyle(fontSize: 24)),
         ),
       ),
@@ -116,30 +121,37 @@ class _LockScreenState extends ConsumerState<LockScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    for (var i = 0; i < _pin.length.clamp(4, 8); i++)
-                      Container(
-                        width: 14,
-                        height: 14,
-                        margin: const EdgeInsets.symmetric(horizontal: 5),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i < _pin.length ? scheme.primary : null,
-                          border: Border.all(color: scheme.outline),
+                Semantics(
+                  label: 'PIN: ${_pin.length} dígitos ingresados',
+                  excludeSemantics: true,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (var i = 0; i < _pin.length.clamp(4, 8); i++)
+                        Container(
+                          width: 14,
+                          height: 14,
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: i < _pin.length ? scheme.primary : null,
+                            border: Border.all(color: scheme.outline),
+                          ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 40,
                   child: Center(
-                    child: Text(
-                      _waitSeconds > 0
-                          ? 'Espera $_waitSeconds s para reintentar'
-                          : _error ?? '',
-                      style: TextStyle(color: scheme.error),
+                    child: Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        _waitSeconds > 0
+                            ? 'Espera $_waitSeconds s para reintentar'
+                            : _error ?? '',
+                        style: TextStyle(color: scheme.error),
+                      ),
                     ),
                   ),
                 ),
@@ -158,12 +170,18 @@ class _LockScreenState extends ConsumerState<LockScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     biometric
-                        ? key('', icon: Icons.fingerprint, onTap: _biometric)
+                        ? key(
+                            '',
+                            icon: Icons.fingerprint,
+                            onTap: _biometric,
+                            semantics: 'Usar biometría',
+                          )
                         : key('', onTap: null),
                     key('0', onTap: () => _tap('0')),
                     key(
                       '',
                       icon: Icons.backspace_outlined,
+                      semantics: 'Borrar último dígito',
                       onTap: () => setState(() {
                         if (_pin.isNotEmpty) {
                           _pin = _pin.substring(0, _pin.length - 1);

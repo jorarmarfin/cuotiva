@@ -206,4 +206,39 @@ void main() {
     expect(find.text('Ingresa tu PIN'), findsNothing);
     expect(find.text('CONTENIDO'), findsOneWidget);
   });
+
+  testWidgets('LockScreen: accesible con texto grande y con etiquetas', (
+    tester,
+  ) async {
+    await PinService(
+      pinStore,
+      () => now,
+      iterations: 100,
+      useIsolate: false,
+    ).setPin('1234');
+    final c = make();
+    final handle = tester.ensureSemantics();
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: c,
+        child: MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!,
+          ),
+          home: const LockGate(child: Scaffold(body: Text('X'))),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    expect(find.bySemanticsLabel('Borrar último dígito'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp(r'PIN: 0 dígitos')), findsOneWidget);
+    handle.dispose();
+  });
 }

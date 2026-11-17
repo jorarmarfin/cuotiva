@@ -12,9 +12,9 @@
 
 ## Estado Actual
 - **Fase activa**: Fase 4 — Seguridad y cierre V1
-- **Progreso**: 4 de 6 fases completadas
+- **Progreso**: 4 de 6 fases completadas (Fase 4 pendiente solo de prueba manual en dispositivo)
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: Fase 4 — respaldo/restauración cifrado (frase de recuperación), notificaciones, onboarding
+- **Próximo paso concreto**: probar en Android físico offline (PIN, biometría, notificaciones, respaldo/restauración, compartir PDF) y luego Fase 5 (distribución)
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -204,7 +204,7 @@
 
 ---
 
-## Fase 4: Seguridad y cierre V1 — PENDIENTE
+## Fase 4: Seguridad y cierre V1 — CASI COMPLETA (falta prueba en dispositivo físico offline)
 
 **Duración estimada**: 5 días
 **Objetivo**: PIN, biometría, cifrado de BD/adjuntos, respaldo/restauración, notificaciones y pruebas integrales.
@@ -220,28 +220,28 @@
 - [x] PIN con derivación robusta (PBKDF2-HMAC-SHA256 150k it. + sal, bloqueo escalonado); biometría con `local_auth`
 - [x] Bloqueo al volver de segundo plano, período de gracia configurable, FLAG_SECURE opcional
 - [x] Cifrado de adjuntos en disco (AES-256-GCM, AAD = id, subclave HKDF-like de la clave de BD; cifra comprobantes heredados al arrancar)
-- [ ] Onboarding: explicación, PIN, biometría opcional, primer espacio
+- [x] Onboarding: explicación, PIN, biometría opcional, primer espacio
 
 #### Respaldo
 - [x] Exportar paquete cifrado (BD + adjuntos) con AEAD (AES-GCM, PBKDF2 300k), clave desde frase de recuperación (no solo PIN)
 - [x] Restaurar: validar integridad/versión, confirmación explícita con resumen, copia previa y rollback ante fallo (staging + swap al iniciar)
 
 #### Notificaciones
-- [ ] Recordatorios locales de cuotas por vencer/vencidas, permisos Android 13+, zona horaria, reprogramar tras reinicio y tras altas/cambios/anulaciones
-- [ ] Contenido oculto en pantalla bloqueada por defecto
+- [x] Recordatorios locales de cuotas por vencer/vencidas (hoy, antes N días, vencida), permisos Android 13+, zona horaria (flutter_timezone), receptor de arranque y reprogramación ante cambios de datos
+- [x] Contenido oculto en pantalla bloqueada por defecto (visibilidad privada)
 
 #### Ajustes / calidad
-- [ ] Pantalla Ajustes completa (perfil local, PIN/biometría, notificaciones, respaldos, privacidad)
-- [ ] Accesibilidad (contraste, tamaños, semántica) y revisión de estados vacío/error/cancelación
+- [x] Pantalla Ajustes: seguridad (PIN/biometría/gracia/captura), notificaciones, respaldos (perfil local descartado: app mono-usuario sin datos de perfil)
+- [x] Accesibilidad: etiquetas semánticas, texto grande, regiones en vivo en el bloqueo (revisión visual completa en dispositivo pendiente)
 
 #### Tests
-- [~] Unit: KDF/PIN y cifrado de BD hechos; cifrado AEAD y adjuntos hechos; integridad de respaldo pendiente
-- [ ] Integración: flujos 10-12 de §12 (reabrir app, backup→restaurar con hashes, migración de esquema)
-- [ ] Prueba en dispositivo Android físico offline (criterio MVP)
+- [x] Unit: KDF/PIN, cifrado de BD, AEAD, adjuntos e integridad de respaldo
+- [x] Integración: flujos 10 (reabrir app), 11 (respaldo→restaurar con conteos y hashes) y 12 (migración v2→v3 conservando historial)
+- [ ] Prueba en dispositivo Android físico offline (criterio MVP) — manual, pendiente
 
 #### Documentación
-- [ ] Modelo de amenazas y política de privacidad (borrador)
-- [ ] Guía de respaldo/restauración para el usuario
+- [x] Modelo de amenazas (`docs/modelo-de-amenazas.md`) y política de privacidad (borrador `docs/politica-de-privacidad.md`)
+- [x] Guía de respaldo/restauración (`docs/guia-respaldo.md`)
 
 ### Posibles obstáculos
 - Compatibilidad SQLCipher/Drift y versión de plugins → spike de 0.5 día al inicio de la fase.
@@ -249,6 +249,7 @@
 - Restauración fallida a medias → restaurar a ubicación temporal y swap atómico.
 
 ### Notas de avance
+- 2026-11-17: recordatorios (`ReminderPlanner`/`ReminderScheduler`/`LocalNotificationSink`), onboarding, accesibilidad del bloqueo, tests de integración 10-12 y docs. Ver también notas previas.
 - 2026-11-17: respaldo/restauración cifrados (`BackupEnvelope`, `BackupService`, `RestoreApplier`, `RestartHost`, pantalla en Ajustes; +9 tests incl. flujo §12.11 entre dos «dispositivos»). Pendiente: probar en dispositivo real con selector de archivos.
 - 2026-11-17: `AeadCipher` (AES-GCM), adjuntos cifrados en disco + `encryptPending` + lectura descifrada en UI y PDF (+11 tests).
 - 2026-11-17: PIN (`PinService`, PBKDF2 en isolate, 9 tests), `AppLockController`/`LockGate`/`LockScreen` (gracia, biometría, FLAG_SECURE por MethodChannel), Ajustes > Seguridad (+7 tests). MainActivity ahora FlutterFragmentActivity y temas AppCompat (requisito local_auth). APK debug OK. Falta probar biometría y PBKDF2 (tiempo) en dispositivo real.

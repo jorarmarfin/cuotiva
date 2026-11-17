@@ -69,4 +69,53 @@ void main() {
       'pending_verification',
     );
   });
+  test('§12.12 v2 → v3 conserva historial y habilita rendiciones', () async {
+    final schema = await verifier.schemaAt(2);
+    final raw = schema.rawDatabase;
+    const ts = 1763337600;
+    raw.execute(
+      'INSERT INTO spaces (id, created_at, updated_at, name, type, color, icon) '
+      "VALUES ('s1', $ts, $ts, 'Capilla', 'chapel', 1, 'church')",
+    );
+    raw.execute(
+      "INSERT INTO contacts (id, created_at, updated_at, display_name) VALUES ('c1', $ts, $ts, 'Rosa')",
+    );
+    raw.execute(
+      'INSERT INTO collections (id, created_at, updated_at, space_id, title, funds_ownership) '
+      "VALUES ('k1', $ts, $ts, 's1', 'Pasajes', 'third_party')",
+    );
+    raw.execute(
+      'INSERT INTO receivables (id, created_at, updated_at, collection_id, contact_id, principal_minor) '
+      "VALUES ('r1', $ts, $ts, 'k1', 'c1', 80000)",
+    );
+    raw.execute(
+      'INSERT INTO payments (id, created_at, updated_at, receivable_id, amount_minor, occurred_at, status) '
+      "VALUES ('p1', $ts, $ts, 'r1', 60000, $ts, 'confirmed')",
+    );
+    raw.execute(
+      'INSERT INTO audit_logs (id, created_at, updated_at, entity_type, entity_id, action, occurred_at) '
+      "VALUES ('a1', $ts, $ts, 'payment', 'p1', 'register', $ts)",
+    );
+
+    final db = AppDatabase(schema.newConnection());
+    addTearDown(db.close);
+    await verifier.migrateAndValidate(db, 3);
+
+    expect((await db.select(db.payments).get()).single.amountMinor, 60000);
+    expect(await db.select(db.auditLogs).get(), hasLength(1));
+    final now = DateTime(2026, 11, 17);
+    await db
+        .into(db.settlements)
+        .insert(
+          SettlementsCompanion.insert(
+            id: 'st1',
+            createdAt: now,
+            updatedAt: now,
+            collectionId: 'k1',
+            amountMinor: 50000,
+            occurredAt: now,
+          ),
+        );
+    expect((await db.select(db.settlements).get()).single.status, 'confirmed');
+  });
 }

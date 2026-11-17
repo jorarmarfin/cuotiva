@@ -24,6 +24,21 @@ class CreditsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          FadeInDown(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 20),
+                child: Semantics(
+                  label: 'Logo de Cuotiva',
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 112,
+                    height: 112,
+                  ),
+                ),
+              ),
+            ),
+          ),
           // ── Thank you card ──────────────────────────────────────────────────
           FadeInDown(
             child: Container(

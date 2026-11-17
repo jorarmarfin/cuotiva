@@ -1,5 +1,8 @@
 import 'package:go_router/go_router.dart';
 
+import '../../features/contacts/presentation/screens/contact_detail_screen.dart';
+import '../../features/contacts/presentation/screens/contact_form_screen.dart';
+import '../../features/contacts/presentation/screens/contacts_screen.dart';
 import '../../features/dashboard/presentation/screens/home_screen.dart';
 import '../../features/settings/presentation/screens/credits_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
@@ -30,7 +33,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/personas',
-              builder: (_, _) => const PlaceholderScreen('Personas'),
+              builder: (_, _) => const ContactsScreen(),
             ),
           ],
         ),
@@ -56,6 +59,19 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/espacios/:id/editar',
       builder: (_, s) => SpaceFormScreen(spaceId: s.pathParameters['id']),
+    ),
+    GoRoute(
+      path: '/personas/nuevo',
+      builder: (_, _) => const ContactFormScreen(),
+    ),
+    GoRoute(
+      path: '/personas/:id',
+      builder: (_, s) =>
+          ContactDetailScreen(contactId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/personas/:id/editar',
+      builder: (_, s) => ContactFormScreen(contactId: s.pathParameters['id']),
     ),
     GoRoute(path: '/ajustes', builder: (_, _) => const SettingsScreen()),
     GoRoute(path: '/credits', builder: (_, _) => const CreditsScreen()),

@@ -7,14 +7,47 @@ class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.shell});
   final StatefulNavigationShell shell;
 
+  /// FAB contextual: en Personas agrega persona; en el resto abre un menú.
+  void _onFab(BuildContext context) {
+    if (shell.currentIndex == 2) {
+      context.push('/personas/nuevo');
+      return;
+    }
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.layers_outlined),
+              title: const Text('Nuevo espacio'),
+              onTap: () {
+                Navigator.pop(ctx);
+                context.push('/espacios/nuevo');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_add_alt),
+              title: const Text('Nueva persona'),
+              onTap: () {
+                Navigator.pop(ctx);
+                context.push('/personas/nuevo');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: shell,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: FAB contextual (espacio, cobro, persona o abono)
-        },
+        onPressed: () => _onFab(context),
         child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

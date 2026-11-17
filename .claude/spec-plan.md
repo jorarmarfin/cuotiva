@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 1 — Núcleo de datos
 - **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: providers Riverpod de repositorios + UI de espacios y personas (listas/formularios con estados vacío/carga/error)
+- **Próximo paso concreto**: UI de Personas (lista con búsqueda, formulario, detalle) y luego Cobros + Obligaciones
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -74,12 +74,12 @@
 - [x] Tablas: `spaces`, `contacts`, `collections`, `receivables`, `installments`, `app_settings`, `audit_logs` (id UUID, created_at, updated_at, archived_at donde aplique)
 - [x] FK, índices (§8), CHECK de montos positivos / estados válidos
 - [x] Esquema v1 + estrategia de migraciones (`schemaVersion`, `stepByStep`)
-- [~] Repositorios hechos (spaces, contacts, collections, receivables); falta exponerlos por providers Riverpod
+- [x] Repositorios (spaces, contacts, collections, receivables) expuestos por providers Riverpod
 - [x] Servicio de auditoría reutilizable (escritura dentro de la misma transacción)
 
 #### Frontend
-- [ ] Mis espacios: lista, crear/editar/archivar (color, ícono, descripción)
-- [ ] Detalle de espacio
+- [x] Mis espacios: lista, crear/editar/archivar (color, ícono, descripción)
+- [~] Detalle de espacio (cabecera, editar, archivar; falta lista de cobros)
 - [ ] Personas: lista, crear/editar, detalle (contacto global compartido entre espacios)
 - [ ] Crear/editar cobro (tipo, `funds_ownership`, fechas, notas)
 - [ ] Crear obligación (contacto, cobro, importe, vencimiento) + asignación masiva «S/ 150 a cada participante»
@@ -104,6 +104,7 @@
 - 2026-11-17: esquema Drift v1 (7 tablas, FK, CHECK, UNIQUE contacto/cobro, índices) + 5 tests. `payments`/`attachments`/`settlements` van en Fases 2-3.
 - 2026-11-17: `AuditService` + `SpacesRepository` + `ContactsRepository` (+5 tests).
 - 2026-11-17: `CollectionsRepository` + `ReceivablesRepository` (bulkCreate atómico, regla de no reducir bajo lo cobrado vía `CollectedLookup`, cancelar bloqueado con pagos) (+9 tests). Total 29 tests.
+- 2026-11-17: providers de repos + UI de espacios (lista/form/detalle, estados vacío/carga/error) + Inicio provisional (+5 tests UI, 34 total). Nota: Drift real dentro de `testWidgets` se cuelga; en tests de UI sobreescribir providers de stream.
 
 ---
 

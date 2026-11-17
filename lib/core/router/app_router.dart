@@ -1,5 +1,9 @@
 import 'package:go_router/go_router.dart';
 
+import '../../features/collections/presentation/screens/collection_detail_screen.dart';
+import '../../features/collections/presentation/screens/collection_form_screen.dart';
+import '../../features/collections/presentation/screens/collections_screen.dart';
+import '../../features/receivables/presentation/screens/assign_receivables_screen.dart';
 import '../../features/contacts/presentation/screens/contact_detail_screen.dart';
 import '../../features/contacts/presentation/screens/contact_form_screen.dart';
 import '../../features/contacts/presentation/screens/contacts_screen.dart';
@@ -25,7 +29,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/cobros',
-              builder: (_, _) => const PlaceholderScreen('Cobros'),
+              builder: (_, _) => const CollectionsScreen(),
             ),
           ],
         ),
@@ -72,6 +76,26 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/personas/:id/editar',
       builder: (_, s) => ContactFormScreen(contactId: s.pathParameters['id']),
+    ),
+    GoRoute(
+      path: '/cobros/nuevo',
+      builder: (_, s) =>
+          CollectionFormScreen(spaceId: s.uri.queryParameters['espacio']),
+    ),
+    GoRoute(
+      path: '/cobros/:id',
+      builder: (_, s) =>
+          CollectionDetailScreen(collectionId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/cobros/:id/editar',
+      builder: (_, s) =>
+          CollectionFormScreen(collectionId: s.pathParameters['id']),
+    ),
+    GoRoute(
+      path: '/cobros/:id/asignar',
+      builder: (_, s) =>
+          AssignReceivablesScreen(collectionId: s.pathParameters['id']!),
     ),
     GoRoute(path: '/ajustes', builder: (_, _) => const SettingsScreen()),
     GoRoute(path: '/credits', builder: (_, _) => const CreditsScreen()),

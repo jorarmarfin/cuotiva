@@ -9,6 +9,10 @@ class MainShell extends StatelessWidget {
 
   /// FAB contextual: en Personas agrega persona; en el resto abre un menú.
   void _onFab(BuildContext context) {
+    if (shell.currentIndex == 1) {
+      context.push('/cobros/nuevo');
+      return;
+    }
     if (shell.currentIndex == 2) {
       context.push('/personas/nuevo');
       return;
@@ -26,6 +30,14 @@ class MainShell extends StatelessWidget {
               onTap: () {
                 Navigator.pop(ctx);
                 context.push('/espacios/nuevo');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.assignment_add),
+              title: const Text('Nuevo cobro'),
+              onTap: () {
+                Navigator.pop(ctx);
+                context.push('/cobros/nuevo');
               },
             ),
             ListTile(

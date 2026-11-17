@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/repository_providers.dart';
 import '../../../../core/widgets/app_loader.dart';
+import '../../../collections/domain/collection_labels.dart';
+import '../../../collections/presentation/providers/collections_providers.dart';
 import '../../domain/space_presets.dart';
 import '../providers/spaces_providers.dart';
 
@@ -81,10 +83,38 @@ class SpaceDetailScreen extends ConsumerWidget {
                 subtitle: s.description == null ? null : Text(s.description!),
               ),
               const Divider(),
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text('Los cobros de este espacio aparecerán aquí.'),
-              ),
+              ref
+                  .watch(collectionsBySpaceProvider(spaceId))
+                  .when(
+                    loading: () => const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: LinearProgressIndicator(),
+                    ),
+                    error: (e, _) => Text('Error: $e'),
+                    data: (list) => Column(
+                      children: [
+                        if (list.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Text('Este espacio aún no tiene cobros.'),
+                          ),
+                        for (final c in list)
+                          ListTile(
+                            leading: const Icon(Icons.assignment_outlined),
+                            title: Text(c.title),
+                            subtitle: Text(collectionKindLabel(c.kind)),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () => context.push('/cobros/${c.id}'),
+                          ),
+                        TextButton.icon(
+                          onPressed: () =>
+                              context.push('/cobros/nuevo?espacio=$spaceId'),
+                          icon: const Icon(Icons.add),
+                          label: const Text('Nuevo cobro en este espacio'),
+                        ),
+                      ],
+                    ),
+                  ),
             ],
           ),
         );

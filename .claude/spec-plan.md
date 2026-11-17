@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 1 — Núcleo de datos
 - **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: UI de Cobros (lista buscable, crear/editar) y de Obligaciones (individual + asignación masiva)
+- **Próximo paso concreto**: cerrar Fase 1: historial de obligaciones en detalle de persona, editar importe/cancelar obligación desde UI, docs (diagrama de modelo + ADR), revisar en dispositivo; luego Fase 2
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -79,11 +79,11 @@
 
 #### Frontend
 - [x] Mis espacios: lista, crear/editar/archivar (color, ícono, descripción)
-- [~] Detalle de espacio (cabecera, editar, archivar; falta lista de cobros)
+- [x] Detalle de espacio (cabecera, editar, archivar, lista de cobros)
 - [x] Personas: lista, crear/editar, detalle (contacto global compartido entre espacios) — falta historial de obligaciones en el detalle
-- [ ] Crear/editar cobro (tipo, `funds_ownership`, fechas, notas)
-- [ ] Crear obligación (contacto, cobro, importe, vencimiento) + asignación masiva «S/ 150 a cada participante»
-- [ ] Estados vacío / carga / error en cada lista
+- [x] Crear/editar cobro (tipo, `funds_ownership`, fechas, notas)
+- [x] Crear obligación + asignación masiva «S/ 150 a cada participante» (pantalla Asignar personas; vencimiento por obligación pendiente)
+- [x] Estados vacío / carga / error en cada lista
 
 #### Tests
 - [x] Unit: Money (exactitud en céntimos)
@@ -106,6 +106,7 @@
 - 2026-11-17: `CollectionsRepository` + `ReceivablesRepository` (bulkCreate atómico, regla de no reducir bajo lo cobrado vía `CollectedLookup`, cancelar bloqueado con pagos) (+9 tests). Total 29 tests.
 - 2026-11-17: providers de repos + UI de espacios (lista/form/detalle, estados vacío/carga/error) + Inicio provisional (+5 tests UI, 34 total). Nota: Drift real dentro de `testWidgets` se cuelga; en tests de UI sobreescribir providers de stream.
 - 2026-11-17: UI de Personas (lista con búsqueda, form con validación, detalle, archivar) + FAB contextual (+3 tests UI, 37 total).
+- 2026-11-17: UI de Cobros (lista buscable, form, detalle con obligaciones y total comprometido) + Asignar personas (masivo, omite existentes) + cobros en detalle de espacio (+4 tests UI, 41 total).
 
 ---
 

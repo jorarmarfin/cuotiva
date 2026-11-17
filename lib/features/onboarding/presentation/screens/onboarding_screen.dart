@@ -73,9 +73,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final ctrl = ref.read(appLockProvider.notifier);
     final s = ref.read(appLockProvider).settings;
     if (on) {
-      final bio = ref.read(biometricServiceProvider);
-      if (!await bio.isAvailable ||
-          !await bio.authenticate('Confirma para activar la biometría')) {
+      final problem = await ref
+          .read(biometricServiceProvider)
+          .verifyForActivation('Confirma para activar la biometría');
+      if (problem != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(problem)));
+        }
         return;
       }
     }

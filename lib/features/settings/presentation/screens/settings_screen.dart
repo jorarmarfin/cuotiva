@@ -59,14 +59,11 @@ class SettingsScreen extends ConsumerWidget {
 
     Future<void> toggleBiometric(bool on) async {
       if (on) {
-        final bio = ref.read(biometricServiceProvider);
-        if (!await bio.isAvailable) {
-          if (context.mounted) {
-            _toast(context, 'Este dispositivo no tiene biometría registrada');
-          }
-          return;
-        }
-        if (!await bio.authenticate('Confirma para activar la biometría')) {
+        final problem = await ref
+            .read(biometricServiceProvider)
+            .verifyForActivation('Confirma para activar la biometría');
+        if (problem != null) {
+          if (context.mounted) _toast(context, problem);
           return;
         }
       }

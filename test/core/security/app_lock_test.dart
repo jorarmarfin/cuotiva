@@ -33,6 +33,9 @@ class _Bio implements BiometricService {
   Future<bool> get isAvailable async => true;
   @override
   Future<bool> authenticate(String reason) async => ok;
+  @override
+  Future<String?> verifyForActivation(String reason) async =>
+      ok ? null : 'No se confirmó la biometría.';
 }
 
 void main() {

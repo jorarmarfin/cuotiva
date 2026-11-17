@@ -11,6 +11,7 @@ import '../../features/receivables/data/receivables_repository.dart';
 import '../../features/reports/data/reports_repository.dart';
 import '../../features/settlements/data/settlements_repository.dart';
 import '../../features/spaces/data/spaces_repository.dart';
+import '../backup/backup_service.dart';
 import '../database/audit_service.dart';
 import '../security/crypto_service.dart';
 import '../security/db_key_service.dart';
@@ -123,3 +124,16 @@ final reportsRepositoryProvider = Provider<ReportsRepository>(
     ref.watch(attachmentsRepositoryProvider),
   ),
 );
+
+final backupServiceProvider = FutureProvider<BackupService>((ref) async {
+  final db = ref.watch(appDatabaseProvider);
+  final keys = ref.watch(dbKeyServiceProvider);
+  return BackupService(
+    paths: await BackupPaths.resolve(),
+    attachments: ref.watch(attachmentsRepositoryProvider),
+    dbHexKey: keys.getOrCreate,
+    attachmentCipher: ref.watch(attachmentCipherProvider),
+    schemaVersion: db.schemaVersion,
+    clock: ref.watch(clockProvider),
+  );
+});

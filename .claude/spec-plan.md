@@ -223,8 +223,8 @@
 - [ ] Onboarding: explicación, PIN, biometría opcional, primer espacio
 
 #### Respaldo
-- [ ] Exportar paquete cifrado (BD + adjuntos) con AEAD, clave desde frase de recuperación (no solo PIN)
-- [ ] Restaurar: validar integridad/versión/espacio, confirmación explícita, respaldo previo y rollback ante fallo
+- [x] Exportar paquete cifrado (BD + adjuntos) con AEAD (AES-GCM, PBKDF2 300k), clave desde frase de recuperación (no solo PIN)
+- [x] Restaurar: validar integridad/versión, confirmación explícita con resumen, copia previa y rollback ante fallo (staging + swap al iniciar)
 
 #### Notificaciones
 - [ ] Recordatorios locales de cuotas por vencer/vencidas, permisos Android 13+, zona horaria, reprogramar tras reinicio y tras altas/cambios/anulaciones
@@ -249,6 +249,7 @@
 - Restauración fallida a medias → restaurar a ubicación temporal y swap atómico.
 
 ### Notas de avance
+- 2026-11-17: respaldo/restauración cifrados (`BackupEnvelope`, `BackupService`, `RestoreApplier`, `RestartHost`, pantalla en Ajustes; +9 tests incl. flujo §12.11 entre dos «dispositivos»). Pendiente: probar en dispositivo real con selector de archivos.
 - 2026-11-17: `AeadCipher` (AES-GCM), adjuntos cifrados en disco + `encryptPending` + lectura descifrada en UI y PDF (+11 tests).
 - 2026-11-17: PIN (`PinService`, PBKDF2 en isolate, 9 tests), `AppLockController`/`LockGate`/`LockScreen` (gracia, biometría, FLAG_SECURE por MethodChannel), Ajustes > Seguridad (+7 tests). MainActivity ahora FlutterFragmentActivity y temas AppCompat (requisito local_auth). APK debug OK. Falta probar biometría y PBKDF2 (tiempo) en dispositivo real.
 - 2026-11-17: spike SQLCipher OK (host y APK debug). `openEncrypted` + `DbKeyService` + migración plano→cifrado (+5 tests). `AppDatabase` ya no abre SQLite plano por defecto.

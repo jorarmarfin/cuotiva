@@ -40,21 +40,43 @@ Future<bool> isPlainSqlite(File f) async {
   }
 }
 
+/// Copia [plain] (SQLite sin cifrar) a [dest] cifrada con [hexKey],
+/// conservando `user_version`. No modifica el original.
+void exportPlainToEncrypted(File plain, File dest, String hexKey) {
+  if (dest.existsSync()) dest.deleteSync();
+  final db = sqlite3.open(plain.path);
+  try {
+    final version = db.select('PRAGMA user_version').first.values.first;
+    db.execute("""ATTACH DATABASE '${dest.path}' AS enc KEY "x'$hexKey'";""");
+    db.select("SELECT sqlcipher_export('enc')");
+    db.execute('PRAGMA enc.user_version = $version');
+    db.execute('DETACH DATABASE enc');
+  } finally {
+    db.close();
+  }
+}
+
+/// Copia la base abierta en [live] a un SQLite en claro en [dest]
+/// (para el respaldo, que se cifra aparte con la frase de recuperación).
+void exportEncryptedToPlain(File live, File dest, String hexKey) {
+  if (dest.existsSync()) dest.deleteSync();
+  final db = sqlite3.open(live.path)..applyKey(hexKey);
+  try {
+    final version = db.select('PRAGMA user_version').first.values.first;
+    db.execute("ATTACH DATABASE '${dest.path}' AS plain KEY '';");
+    db.select("SELECT sqlcipher_export('plain')");
+    db.execute('PRAGMA plain.user_version = $version');
+    db.execute('DETACH DATABASE plain');
+  } finally {
+    db.close();
+  }
+}
+
 /// Exporta la base plana a una cifrada y reemplaza el archivo (conserva
 /// `user_version`, necesario para las migraciones de Drift).
 Future<void> migratePlainToEncrypted(File file, String hexKey) async {
   final tmp = File('${file.path}.enc');
-  if (await tmp.exists()) await tmp.delete();
-  final plain = sqlite3.open(file.path);
-  try {
-    final version = plain.select('PRAGMA user_version').first.values.first;
-    plain.execute('''ATTACH DATABASE '${tmp.path}' AS enc KEY "x'$hexKey'";''');
-    plain.select("SELECT sqlcipher_export('enc')");
-    plain.execute('PRAGMA enc.user_version = $version');
-    plain.execute('DETACH DATABASE enc');
-  } finally {
-    plain.close();
-  }
+  exportPlainToEncrypted(file, tmp, hexKey);
   // Se conserva la copia plana hasta confirmar que la nueva abre.
   final backup = File('${file.path}.plain-bak');
   await file.rename(backup.path);

@@ -13,19 +13,13 @@ final dbKeyServiceProvider = Provider<DbKeyService>(
   (_) => DbKeyService(const SecureDbKeyStore()),
 );
 
+Future<File> locateDatabaseFile() async => File(
+  p.join((await getApplicationDocumentsDirectory()).path, 'cuotiva.sqlite'),
+);
+
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final keys = ref.watch(dbKeyServiceProvider);
-  final db = AppDatabase(
-    openEncrypted(
-      () async => File(
-        p.join(
-          (await getApplicationDocumentsDirectory()).path,
-          'cuotiva.sqlite',
-        ),
-      ),
-      keys.getOrCreate,
-    ),
-  );
+  final db = AppDatabase(openEncrypted(locateDatabaseFile, keys.getOrCreate));
   ref.onDispose(db.close);
   return db;
 });

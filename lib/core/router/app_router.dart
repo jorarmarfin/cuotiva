@@ -16,6 +16,7 @@ import '../../features/reports/presentation/screens/campaign_preview_screen.dart
 import '../../features/reports/presentation/screens/reports_screen.dart';
 import '../../features/reports/presentation/screens/statement_preview_screen.dart';
 import '../../features/settlements/presentation/screens/settlements_screen.dart';
+import '../../features/settings/presentation/screens/backup_screen.dart';
 import '../../features/settings/presentation/screens/credits_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/spaces/presentation/screens/space_detail_screen.dart';
@@ -140,6 +141,7 @@ final appRouter = GoRouter(
           PaymentDetailScreen(paymentId: s.pathParameters['id']!),
     ),
     GoRoute(path: '/ajustes', builder: (_, _) => const SettingsScreen()),
+    GoRoute(path: '/respaldo', builder: (_, _) => const BackupScreen()),
     GoRoute(path: '/credits', builder: (_, _) => const CreditsScreen()),
   ],
 );

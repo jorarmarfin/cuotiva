@@ -48,6 +48,8 @@ dependencies:
   image: ^4.13.1
   sqlite3: ^3.9.1
   cryptography: ^2.9.0
+  archive: ^4.7.1
+  file_picker: ^13.4.0
 
 dev_dependencies:
   flutter_test:

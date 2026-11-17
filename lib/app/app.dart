@@ -12,7 +12,10 @@ import '../core/update/app_update_service.dart';
 import '../core/widgets/lock_screen.dart';
 
 class CuotivaApp extends ConsumerStatefulWidget {
-  const CuotivaApp({super.key});
+  const CuotivaApp({super.key, this.startupMessage});
+
+  /// Aviso al arrancar (p. ej. restauración fallida y revertida).
+  final String? startupMessage;
 
   @override
   ConsumerState<CuotivaApp> createState() => _CuotivaAppState();
@@ -27,6 +30,12 @@ class _CuotivaAppState extends ConsumerState<CuotivaApp> {
       unawaited(AppUpdateService.instance.checkAndDownload());
       // Comprobantes de versiones previas al cifrado.
       unawaited(_encryptPending());
+      final msg = widget.startupMessage;
+      if (msg != null) {
+        rootMessengerKey.currentState?.showSnackBar(
+          SnackBar(content: Text(msg)),
+        );
+      }
     });
   }
 

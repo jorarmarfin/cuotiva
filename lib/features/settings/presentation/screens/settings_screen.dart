@@ -140,6 +140,15 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) => ctrl.updateSettings(s.copyWith(secureScreen: v)),
           ),
           const Divider(),
+          const _Header('Datos'),
+          ListTile(
+            leading: const Icon(Icons.backup_outlined),
+            title: const Text('Respaldo y restauración'),
+            subtitle: const Text('Archivo cifrado con frase de recuperación'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/respaldo'),
+          ),
+          const Divider(),
           const _Header('General'),
           ListTile(
             leading: const Icon(Icons.system_update_outlined),

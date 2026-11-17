@@ -18,3 +18,20 @@ Future<void> sharePdf(Uint8List bytes, String fileName) async {
     ),
   );
 }
+
+/// Comparte cualquier archivo binario por la hoja nativa.
+Future<void> shareBytes(
+  Uint8List bytes,
+  String fileName, {
+  String mimeType = 'application/octet-stream',
+}) async {
+  final dir = await getTemporaryDirectory();
+  final file = File('${dir.path}/$fileName');
+  await file.writeAsBytes(bytes, flush: true);
+  await SharePlus.instance.share(
+    ShareParams(
+      files: [XFile(file.path, mimeType: mimeType)],
+      subject: fileName,
+    ),
+  );
+}

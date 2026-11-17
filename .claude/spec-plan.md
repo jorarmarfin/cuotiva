@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 1 — Núcleo de datos
 - **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: repositorios de cobros y obligaciones (+ asignación masiva, regla de no reducir bajo lo cobrado) y providers Riverpod
+- **Próximo paso concreto**: providers Riverpod de repositorios + UI de espacios y personas (listas/formularios con estados vacío/carga/error)
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -74,7 +74,7 @@
 - [x] Tablas: `spaces`, `contacts`, `collections`, `receivables`, `installments`, `app_settings`, `audit_logs` (id UUID, created_at, updated_at, archived_at donde aplique)
 - [x] FK, índices (§8), CHECK de montos positivos / estados válidos
 - [x] Esquema v1 + estrategia de migraciones (`schemaVersion`, `stepByStep`)
-- [ ] Repositorios + casos de uso en `domain/` por feature (sin SQL en UI)
+- [~] Repositorios hechos (spaces, contacts, collections, receivables); falta exponerlos por providers Riverpod
 - [x] Servicio de auditoría reutilizable (escritura dentro de la misma transacción)
 
 #### Frontend
@@ -88,7 +88,7 @@
 #### Tests
 - [x] Unit: Money (exactitud en céntimos)
 - [x] Unit: contacto compartido entre espacios y cobros
-- [ ] Unit: no reducir obligación por debajo de lo cobrado (regla ya modelada aunque aún no haya pagos)
+- [x] Unit: no reducir obligación por debajo de lo cobrado (regla ya modelada aunque aún no haya pagos)
 - [x] Test de migración/esquema v1 con DB en memoria
 
 #### Documentación
@@ -103,6 +103,7 @@
 - 2026-11-17: `Money` + 9 tests listos (parse, format, split, sin double).
 - 2026-11-17: esquema Drift v1 (7 tablas, FK, CHECK, UNIQUE contacto/cobro, índices) + 5 tests. `payments`/`attachments`/`settlements` van en Fases 2-3.
 - 2026-11-17: `AuditService` + `SpacesRepository` + `ContactsRepository` (+5 tests).
+- 2026-11-17: `CollectionsRepository` + `ReceivablesRepository` (bulkCreate atómico, regla de no reducir bajo lo cobrado vía `CollectedLookup`, cancelar bloqueado con pagos) (+9 tests). Total 29 tests.
 
 ---
 

@@ -11,10 +11,10 @@
 - **Timeline estimado**: ~5 semanas (2-5 días por fase)
 
 ## Estado Actual
-- **Fase activa**: Fase 1 — Núcleo de datos
-- **Progreso**: 1 de 6 fases completadas
+- **Fase activa**: Fase 2 — Cobros y abonos
+- **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: validar compilación Android (`flutter build apk --debug`) y cerrar Fase 1; luego Fase 2 (tablas `payments`/`attachments`, calculadora de saldos con tests)
+- **Próximo paso concreto**: Fase 2 — tablas `payments`/`payment_allocations`/`attachments` (schema v2 + migración) y calculadora de saldos con tests primero
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -58,7 +58,7 @@
 
 ---
 
-## Fase 1: Núcleo de datos — EN PROGRESO
+## Fase 1: Núcleo de datos — COMPLETADA
 
 **Duración estimada**: 4 días
 **Objetivo**: espacios, contactos, cobros y obligaciones con esquema Drift, repositorios, casos de uso y UI CRUD básica.
@@ -107,11 +107,12 @@
 - 2026-11-17: providers de repos + UI de espacios (lista/form/detalle, estados vacío/carga/error) + Inicio provisional (+5 tests UI, 34 total). Nota: Drift real dentro de `testWidgets` se cuelga; en tests de UI sobreescribir providers de stream.
 - 2026-11-17: UI de Personas (lista con búsqueda, form con validación, detalle, archivar) + FAB contextual (+3 tests UI, 37 total).
 - 2026-11-17: UI de Cobros (lista buscable, form, detalle con obligaciones y total comprometido) + Asignar personas (masivo, omite existentes) + cobros en detalle de espacio (+4 tests UI, 41 total).
-- 2026-11-17: historial en detalle de persona, editar importe / cancelar obligación desde UI, `docs/modelo-datos.md` y ADR 0002 (42 tests). Fase 1 funcionalmente completa, pendiente verificar en dispositivo.
+- 2026-11-17: historial en detalle de persona, editar importe / cancelar obligación desde UI, `docs/modelo-datos.md` y ADR 0002 (42 tests). Fase 1 funcionalmente completa.
+- 2026-11-17: `flutter build apk --debug` OK tras activar core library desugaring (lo exige flutter_local_notifications). Aún sin probar en dispositivo físico.
 
 ---
 
-## Fase 2: Cobros y abonos (núcleo funcional) — PENDIENTE
+## Fase 2: Cobros y abonos (núcleo funcional) — PENDIENTE (siguiente)
 
 **Duración estimada**: 5 días
 **Objetivo**: cuotas, pagos con verificación, anulaciones, saldos correctos, auditoría, dashboard y búsqueda.
@@ -307,3 +308,4 @@
 ## Historial de Cambios
 - 2026-11-17: Plan creado con 6 fases desde CUOTIVA_SPEC.md §13. Fase 0 parcialmente completada por el scaffold.
 - 2026-11-17: Fase 0 completada; Fase 1 iniciada (Money).
+- 2026-11-17: Fase 1 completada (APK debug compila).

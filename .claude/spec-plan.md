@@ -11,12 +11,12 @@
 - **Timeline estimado**: ~5 semanas (2-5 días por fase)
 
 ## Estado Actual
-- **Fase activa**: Fase 0 — Base del proyecto
-- **Progreso**: 0 de 6 fases completadas (Fase 0 ~60% hecha)
+- **Fase activa**: Fase 1 — Núcleo de datos
+- **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: configurar Drift (`AppDatabase` vacío + build_runner) y escribir README/CHANGELOG/ADR para cerrar Fase 0
+- **Próximo paso concreto**: definir tablas Drift v1 (`spaces`, `contacts`, `collections`, `receivables`, `installments`, `audit_logs`, `app_settings`) y sus repositorios
 
-## Fase 0: Base del proyecto — EN PROGRESO
+## Fase 0: Base del proyecto — COMPLETADA
 
 **Duración estimada**: 2 días
 **Objetivo**: proyecto compilable con estructura, tema, router y herramientas de calidad.
@@ -35,18 +35,18 @@
 - [x] Riverpod (`ProviderScope`), localización es-PE
 - [x] `AppLoader` (FourRotatingDots), pantalla Ajustes + Créditos
 - [x] Icono adaptativo + splash; `run.sh`; `scripts/build_release.sh`
-- [ ] Lints estrictos en `analysis_options.yaml` (prefer_const, require_trailing_commas, etc.)
-- [ ] Drift: `AppDatabase` base, `PRAGMA foreign_keys=ON`, build_runner funcionando
-- [ ] Providers raíz (database, clock inyectable, uuid)
+- [x] Lints estrictos en `analysis_options.yaml` (prefer_const, require_trailing_commas, etc.)
+- [x] Drift: `AppDatabase` base, `PRAGMA foreign_keys=ON`, build_runner funcionando
+- [x] Providers raíz (database, clock inyectable, uuid)
 
 #### Tests
 - [x] Smoke test de arranque
-- [ ] CI (GitHub Actions): `pub get`, `analyze`, `test`
+- [x] CI (GitHub Actions): `pub get`, `analyze`, `test`
 
 #### Documentación
-- [ ] `README.md` con comandos (§14)
-- [ ] `CHANGELOG.md`
-- [ ] `docs/adr/0001-arquitectura.md` (Riverpod, Drift, local-first, dinero en céntimos)
+- [x] `README.md` con comandos (§14)
+- [x] `CHANGELOG.md`
+- [x] `docs/adr/0001-arquitectura.md` (Riverpod, Drift, local-first, dinero en céntimos)
 
 ### Posibles obstáculos
 - Conflictos de versiones (ya ocurrió win32: share_plus/secure_storage/package_info) → fijar versiones en pubspec.
@@ -54,10 +54,11 @@
 
 ### Notas de avance
 - 2026-11-17: scaffold generado con skill flutter-new-app; analyze limpio, test OK.
+- 2026-11-17: Fase 0 cerrada (lints, Drift base, CI, README/CHANGELOG/ADR 0001).
 
 ---
 
-## Fase 1: Núcleo de datos — PENDIENTE
+## Fase 1: Núcleo de datos — EN PROGRESO
 
 **Duración estimada**: 4 días
 **Objetivo**: espacios, contactos, cobros y obligaciones con esquema Drift, repositorios, casos de uso y UI CRUD básica.
@@ -69,7 +70,7 @@
 ### Entregables (Definición de Done)
 
 #### Datos
-- [ ] Servicio `core/money`: `Money(minor, currency)`, formateo S/, parseo, redondeo centralizado (con tests PRIMERO)
+- [x] Servicio `core/money`: `Money(minor, currency)`, formateo S/, parseo, redondeo centralizado (con tests PRIMERO)
 - [ ] Tablas: `spaces`, `contacts`, `collections`, `receivables`, `installments`, `app_settings`, `audit_logs` (id UUID, created_at, updated_at, archived_at donde aplique)
 - [ ] FK, índices (§8), CHECK de montos positivos / estados válidos
 - [ ] Esquema v1 + estrategia de migraciones (`schemaVersion`, `stepByStep`)
@@ -85,7 +86,7 @@
 - [ ] Estados vacío / carga / error en cada lista
 
 #### Tests
-- [ ] Unit: Money (exactitud en céntimos)
+- [x] Unit: Money (exactitud en céntimos)
 - [ ] Unit: contacto compartido entre espacios y cobros
 - [ ] Unit: no reducir obligación por debajo de lo cobrado (regla ya modelada aunque aún no haya pagos)
 - [ ] Test de migración/esquema v1 con DB en memoria
@@ -99,7 +100,7 @@
 - Lógica de dominio filtrándose a la UI → casos de uso obligatorios.
 
 ### Notas de avance
--
+- 2026-11-17: `Money` + 9 tests listos (parse, format, split, sin double).
 
 ---
 
@@ -260,7 +261,7 @@
 - [ ] Validar marca «Cuotiva» (Indecopi, Play Store, dominios)
 - [ ] Ficha de Play Store (capturas, descripción, eslogan «Cada cuota cuenta»)
 - [ ] Tests: `flutter analyze` + `flutter test` en CI verdes; smoke del AAB release en dispositivo
-- [ ] `CHANGELOG.md` v1.0.0 y README final
+- [x] `CHANGELOG.md` v1.0.0 y README final
 
 ### Posibles obstáculos
 - Nombre ya registrado → plan B de nombre antes de gastar en assets.
@@ -298,3 +299,4 @@
 
 ## Historial de Cambios
 - 2026-11-17: Plan creado con 6 fases desde CUOTIVA_SPEC.md §13. Fase 0 parcialmente completada por el scaffold.
+- 2026-11-17: Fase 0 completada; Fase 1 iniciada (Money).

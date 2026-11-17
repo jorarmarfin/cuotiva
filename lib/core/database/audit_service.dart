@@ -42,4 +42,17 @@ class AuditService {
           ),
         );
   }
+
+  /// Historial de un registro, del más reciente al más antiguo.
+  Stream<List<AuditLog>> watchFor(String entityType, String entityId) =>
+      (_db.select(_db.auditLogs)
+            ..where(
+              (l) =>
+                  l.entityType.equals(entityType) & l.entityId.equals(entityId),
+            )
+            ..orderBy([
+              (l) => OrderingTerm.desc(l.occurredAt),
+              (l) => OrderingTerm.desc(l.createdAt),
+            ]))
+          .watch();
 }

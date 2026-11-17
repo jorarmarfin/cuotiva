@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/collections/presentation/screens/collection_detail_screen.dart';
 import '../../features/collections/presentation/screens/collection_form_screen.dart';
 import '../../features/collections/presentation/screens/collections_screen.dart';
+import '../../features/installments/presentation/screens/installment_plan_screen.dart';
+import '../../features/payments/presentation/screens/payment_detail_screen.dart';
 import '../../features/payments/presentation/screens/payment_form_screen.dart';
 import '../../features/receivables/presentation/screens/assign_receivables_screen.dart';
 import '../../features/receivables/presentation/screens/receivable_detail_screen.dart';
@@ -108,6 +110,16 @@ final appRouter = GoRouter(
       path: '/obligaciones/:id/abono',
       builder: (_, s) =>
           PaymentFormScreen(receivableId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/obligaciones/:id/plan',
+      builder: (_, s) =>
+          InstallmentPlanScreen(receivableId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/abonos/:id',
+      builder: (_, s) =>
+          PaymentDetailScreen(paymentId: s.pathParameters['id']!),
     ),
     GoRoute(path: '/ajustes', builder: (_, _) => const SettingsScreen()),
     GoRoute(path: '/credits', builder: (_, _) => const CreditsScreen()),

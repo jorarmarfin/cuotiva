@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 2 — Cobros y abonos
 - **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: Detalle de abono (confirmar/rechazar/anular con motivo, comprobantes, historial de auditoría) y pantalla de Plan de cuotas; luego Inicio con totales y búsqueda
+- **Próximo paso concreto**: Inicio con totales reales (por cobrar/recaudado/vencido, pagos recientes, próximos vencimientos, filtro por espacio) y búsqueda/filtros en Cobros
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -133,8 +133,8 @@
 
 #### Frontend
 - [x] Registrar abono (pocos toques: importe, fecha, método, referencia, imágenes con image_picker, confirmar ahora / por verificar)
-- [ ] Detalle de abono: evidencia, confirmar/rechazar/anular, historial de auditoría
-- [ ] Plan de cuotas (pantalla editable con validación)
+- [x] Detalle de abono: evidencia, confirmar/rechazar/anular con motivo, historial de auditoría
+- [x] Plan de cuotas (pantalla editable con validación de suma, generar iguales, quitar plan)
 - [x] Detalle de cobro: avance global, participantes, saldo y estado por obligación (pagos: ver detalle de obligación)
 - [ ] Inicio: tarjetas por cobrar/recaudado/vencido, pagos recientes, próximos vencimientos, filtro por espacio
 - [ ] Lista de Cobros buscable con filtros por estado/espacio
@@ -317,3 +317,4 @@
 - 2026-11-17: `AttachmentsRepository` (+7 tests, dependencia `crypto`).
 - 2026-11-17: Plan de cuotas + `AllocationService` (FIFO, derivado) + guard de importe con plan; `PaymentsRepository` reasigna al confirmar/anular. Capa de dominio/datos de Fase 2 completa; falta toda la UI de abonos, dashboard y búsqueda.
 - 2026-11-17: UI: detalle de obligación (saldo, plan, abonos), formulario de abono con comprobantes, totales/estados en detalle de cobro; `BalancesRepository` (lotes + totales globales). Falta detalle de abono, pantalla de plan, dashboard, búsqueda.
+- 2026-11-17: Detalle de abono (confirmar/rechazar/anular con motivo, comprobantes, historial) + pantalla de plan de cuotas. Nota test: los widgets no deben leer repositorios en `build` (abre la DB real); leerlos en callbacks.

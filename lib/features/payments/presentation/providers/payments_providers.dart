@@ -25,3 +25,8 @@ final attachmentsByPaymentProvider =
 final paymentProvider = StreamProvider.family<Payment?, String>(
   (ref, id) => ref.watch(paymentsRepositoryProvider).watchOne(id),
 );
+
+final paymentAuditProvider = StreamProvider.family<List<AuditLog>, String>(
+  (ref, paymentId) =>
+      ref.watch(auditServiceProvider).watchFor('payment', paymentId),
+);

@@ -265,7 +265,8 @@
 - [ ] Permisos mínimos en `AndroidManifest` auditados
 - [ ] Firma Android (keystore fuera del repo; `key.properties` ignorado) y build reproducible
 - [ ] `scripts/build_release.sh` → APK/AAB ofuscado; símbolos respaldados
-- [ ] Política de privacidad publicada y enlazada en Ajustes
+- [ ] Verificar actualización automática (in_app_update) en Play: instalar vN desde Internal testing, subir vN+1 (subir `versionCode`) y comprobar descarga flexible + aviso REINICIAR
+- [ ] Política de privacidad publicada y enlazada en Ajustes (mencionar consulta a Google Play)
 - [ ] Validar marca «Cuotiva» (Indecopi, Play Store, dominios)
 - [ ] Ficha de Play Store (capturas, descripción, eslogan «Cada cuota cuenta»)
 - [ ] Tests: `flutter analyze` + `flutter test` en CI verdes; smoke del AAB release en dispositivo
@@ -309,3 +310,4 @@
 - 2026-11-17: Plan creado con 6 fases desde CUOTIVA_SPEC.md §13. Fase 0 parcialmente completada por el scaffold.
 - 2026-11-17: Fase 0 completada; Fase 1 iniciada (Money).
 - 2026-11-17: Fase 1 completada (APK debug compila).
+- 2026-11-17: `AppUpdateService` (in_app_update, actualización flexible de Play al arrancar + botón manual en Ajustes). Solo funciona con instalación desde Play.

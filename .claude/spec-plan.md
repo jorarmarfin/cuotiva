@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 1 — Núcleo de datos
 - **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: definir tablas Drift v1 (`spaces`, `contacts`, `collections`, `receivables`, `installments`, `audit_logs`, `app_settings`) y sus repositorios
+- **Próximo paso concreto**: repositorios + casos de uso + `AuditService` (spaces, contacts, collections, receivables)
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -71,9 +71,9 @@
 
 #### Datos
 - [x] Servicio `core/money`: `Money(minor, currency)`, formateo S/, parseo, redondeo centralizado (con tests PRIMERO)
-- [ ] Tablas: `spaces`, `contacts`, `collections`, `receivables`, `installments`, `app_settings`, `audit_logs` (id UUID, created_at, updated_at, archived_at donde aplique)
-- [ ] FK, índices (§8), CHECK de montos positivos / estados válidos
-- [ ] Esquema v1 + estrategia de migraciones (`schemaVersion`, `stepByStep`)
+- [x] Tablas: `spaces`, `contacts`, `collections`, `receivables`, `installments`, `app_settings`, `audit_logs` (id UUID, created_at, updated_at, archived_at donde aplique)
+- [x] FK, índices (§8), CHECK de montos positivos / estados válidos
+- [x] Esquema v1 + estrategia de migraciones (`schemaVersion`, `stepByStep`)
 - [ ] Repositorios + casos de uso en `domain/` por feature (sin SQL en UI)
 - [ ] Servicio de auditoría reutilizable (escritura dentro de la misma transacción)
 
@@ -87,9 +87,9 @@
 
 #### Tests
 - [x] Unit: Money (exactitud en céntimos)
-- [ ] Unit: contacto compartido entre espacios y cobros
+- [x] Unit: contacto compartido entre espacios y cobros
 - [ ] Unit: no reducir obligación por debajo de lo cobrado (regla ya modelada aunque aún no haya pagos)
-- [ ] Test de migración/esquema v1 con DB en memoria
+- [x] Test de migración/esquema v1 con DB en memoria
 
 #### Documentación
 - [ ] Diagrama del modelo de datos en `docs/`
@@ -101,6 +101,7 @@
 
 ### Notas de avance
 - 2026-11-17: `Money` + 9 tests listos (parse, format, split, sin double).
+- 2026-11-17: esquema Drift v1 (7 tablas, FK, CHECK, UNIQUE contacto/cobro, índices) + 5 tests. `payments`/`attachments`/`settlements` van en Fases 2-3.
 
 ---
 

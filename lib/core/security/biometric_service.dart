@@ -18,6 +18,8 @@ class LocalBiometricService implements BiometricService {
           (await _auth.getAvailableBiometrics()).isNotEmpty;
     } on PlatformException {
       return false;
+    } on MissingPluginException {
+      return false; // plataforma sin biometría (p. ej. escritorio Linux)
     }
   }
 
@@ -33,6 +35,8 @@ class LocalBiometricService implements BiometricService {
       );
     } on PlatformException {
       return false;
+    } on MissingPluginException {
+      return false; // plataforma sin biometría (p. ej. escritorio Linux)
     }
   }
 }

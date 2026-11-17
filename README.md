@@ -13,7 +13,7 @@ flutter pub get
 dart run build_runner build --delete-conflicting-outputs   # código Drift
 flutter analyze
 flutter test
-flutter run            # o ./run.sh
+flutter run            # o ./run.sh (Linux/Android auto), ./run.sh test, ./run.sh clean
 ./scripts/build_release.sh apk        # release ofuscado
 ./scripts/build_release.sh appbundle
 ```

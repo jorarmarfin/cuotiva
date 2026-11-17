@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 2 — Cobros y abonos
 - **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: adjuntos de comprobantes (`AttachmentsRepository`, image_picker, copia a almacenamiento privado + checksum) y luego plan de cuotas
+- **Próximo paso concreto**: plan de cuotas (`InstallmentsRepository`: generar/editar con suma exacta + asignación de pagos) y luego UI de Registrar abono
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -129,7 +129,7 @@
 - [x] Casos de uso transaccionales: registrar abono, confirmar, rechazar, anular con motivo (+ auditoría en misma transacción) — `PaymentsRepository`
 - [x] Reglas: pago > saldo rechazado con mensaje; pendiente no descuenta; pagada solo con saldo confirmado 0
 - [ ] Plan de cuotas: generar/editar, validar suma == total; asignación de pagos a cuotas
-- [ ] Adjuntos: `image_picker`, copia a almacenamiento privado, checksum (cifrado real en Fase 4)
+- [~] Adjuntos: repositorio hecho (copia a almacenamiento privado, SHA-256, verify, quitar solo si pendiente); falta integrar `image_picker` en la UI (cifrado real en Fase 4)
 
 #### Frontend
 - [ ] Registrar abono (pocos toques: importe, fecha, método, referencia, imágenes, estado)
@@ -314,3 +314,4 @@
 - 2026-11-17: Fase 2 iniciada: esquema v2 (payments, payment_allocations, attachments) con migración probada (`drift_schemas/`, `test/drift/`). Al cambiar el esquema: `dart run drift_dev schema dump` + `schema generate`.
 - 2026-11-17: `BalanceCalculator` (saldo, estados derivados, totales de cobro) con 17 tests.
 - 2026-11-17: `PaymentsRepository` (register/confirm/reject/void, exceso rechazado, revalidación al confirmar, auditoría transaccional) + 12 tests; `CollectedLookup` conectado a pagos confirmados.
+- 2026-11-17: `AttachmentsRepository` (+7 tests, dependencia `crypto`).

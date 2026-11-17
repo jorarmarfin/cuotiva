@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../features/collections/data/collections_repository.dart';
 import '../../features/contacts/data/contacts_repository.dart';
+import '../../features/payments/data/attachments_repository.dart';
 import '../../features/payments/data/payments_repository.dart';
 import '../../features/receivables/data/receivables_repository.dart';
 import '../../features/spaces/data/spaces_repository.dart';
@@ -49,6 +51,17 @@ final paymentsRepositoryProvider = Provider<PaymentsRepository>(
     ref.watch(auditServiceProvider),
     ref.watch(uuidProvider),
     ref.watch(clockProvider),
+  ),
+);
+
+final attachmentsRepositoryProvider = Provider<AttachmentsRepository>(
+  (ref) => AttachmentsRepository(
+    ref.watch(appDatabaseProvider),
+    ref.watch(auditServiceProvider),
+    ref.watch(uuidProvider),
+    ref.watch(clockProvider),
+    // Almacenamiento privado de la app (no visible en la galería).
+    getApplicationSupportDirectory,
   ),
 );
 

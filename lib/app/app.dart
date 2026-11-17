@@ -7,6 +7,7 @@ import '../core/constants/app_constants.dart';
 import '../core/router/app_router.dart';
 import '../core/theme/app_theme.dart';
 import '../core/update/app_update_service.dart';
+import '../core/widgets/lock_screen.dart';
 
 class CuotivaApp extends StatefulWidget {
   const CuotivaApp({super.key});
@@ -40,6 +41,7 @@ class _CuotivaAppState extends State<CuotivaApp> {
       theme: AppTheme.light,
       themeMode: ThemeMode.light, // modo oscuro: mejora posterior (spec §6)
       routerConfig: appRouter,
+      builder: (context, child) => LockGate(child: child ?? const SizedBox()),
       locale: const Locale('es', 'PE'),
       supportedLocales: const [Locale('es', 'PE'), Locale('es')],
       localizationsDelegates: const [

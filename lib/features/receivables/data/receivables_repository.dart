@@ -32,6 +32,10 @@ class ReceivablesRepository {
             ..orderBy([(r) => OrderingTerm.asc(r.createdAt)]))
           .watch();
 
+  Stream<Receivable?> watchOne(String id) => (_db.select(
+    _db.receivables,
+  )..where((r) => r.id.equals(id))).watchSingleOrNull();
+
   Stream<List<Receivable>> watchByContact(String contactId) => (_db.select(
     _db.receivables,
   )..where((r) => r.contactId.equals(contactId))).watch();

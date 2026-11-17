@@ -42,6 +42,10 @@ class PaymentsRepository {
             ..limit(limit))
           .watch();
 
+  Stream<Payment?> watchOne(String id) => (_db.select(
+    _db.payments,
+  )..where((p) => p.id.equals(id))).watchSingleOrNull();
+
   Future<Payment?> find(String id) => (_db.select(
     _db.payments,
   )..where((p) => p.id.equals(id))).getSingleOrNull();

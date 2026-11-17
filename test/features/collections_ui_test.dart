@@ -3,6 +3,7 @@ import 'package:cuotiva/features/collections/presentation/providers/collections_
 import 'package:cuotiva/features/collections/presentation/screens/collection_detail_screen.dart';
 import 'package:cuotiva/features/collections/presentation/screens/collections_screen.dart';
 import 'package:cuotiva/features/contacts/presentation/providers/contacts_providers.dart';
+import 'package:cuotiva/features/receivables/domain/balance_calculator.dart';
 import 'package:cuotiva/features/receivables/presentation/providers/receivables_providers.dart';
 import 'package:cuotiva/features/receivables/presentation/screens/assign_receivables_screen.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,22 @@ void main() {
         receivablesByCollectionProvider('k1').overrideWith(
           (_) => Stream.value([rec('r1', 'c1', 15000), rec('r2', 'c2', 15000)]),
         ),
+        collectionBalancesProvider('k1').overrideWith(
+          (_) => Stream.value({
+            'r1': BalanceCalculator.receivable(
+              principalMinor: 15000,
+              payments: const [
+                PaymentLine(amountMinor: 5000, status: 'confirmed'),
+              ],
+              now: now,
+            ),
+            'r2': BalanceCalculator.receivable(
+              principalMinor: 15000,
+              payments: const [],
+              now: now,
+            ),
+          }),
+        ),
         contactByIdProvider('c1')
             .overrideWith((_) async => person('c1', 'Ana')),
         contactByIdProvider('c2')
@@ -80,6 +97,12 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(find.text('S/ 300.00'), findsOneWidget);
+    expect(find.text('S/ 50.00'), findsOneWidget); // recaudado
+    expect(find.textContaining('16.7% recaudado'), findsOneWidget);
+    expect(find.text('Abonado'), findsOneWidget);
+    expect(find.text('S/ 50.00'), findsOneWidget); // recaudado
+    expect(find.textContaining('16.7% recaudado'), findsOneWidget);
+    expect(find.text('Abonado'), findsOneWidget);
     expect(find.text('Ana'), findsOneWidget);
     expect(find.text('Beto'), findsOneWidget);
     expect(find.textContaining('2 participante'), findsOneWidget);

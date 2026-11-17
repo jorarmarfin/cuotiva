@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 2 — Cobros y abonos
 - **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: UI de Registrar abono (importe, fecha, medio, referencia, imágenes con image_picker, confirmar ahora/por verificar) y Detalle de abono
+- **Próximo paso concreto**: Detalle de abono (confirmar/rechazar/anular con motivo, comprobantes, historial de auditoría) y pantalla de Plan de cuotas; luego Inicio con totales y búsqueda
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -129,13 +129,13 @@
 - [x] Casos de uso transaccionales: registrar abono, confirmar, rechazar, anular con motivo (+ auditoría en misma transacción) — `PaymentsRepository`
 - [x] Reglas: pago > saldo rechazado con mensaje; pendiente no descuenta; pagada solo con saldo confirmado 0
 - [x] Plan de cuotas: generar/editar, validar suma == total; asignación de pagos a cuotas (`InstallmentPlanner`, `InstallmentsRepository`, `AllocationService` derivada y recalculable)
-- [~] Adjuntos: repositorio hecho (copia a almacenamiento privado, SHA-256, verify, quitar solo si pendiente); falta integrar `image_picker` en la UI (cifrado real en Fase 4)
+- [x] Adjuntos: repositorio + `image_picker` en el formulario de abono (copia a almacenamiento privado, SHA-256; cifrado real en Fase 4)
 
 #### Frontend
-- [ ] Registrar abono (pocos toques: importe, fecha, método, referencia, imágenes, estado)
+- [x] Registrar abono (pocos toques: importe, fecha, método, referencia, imágenes con image_picker, confirmar ahora / por verificar)
 - [ ] Detalle de abono: evidencia, confirmar/rechazar/anular, historial de auditoría
 - [ ] Plan de cuotas (pantalla editable con validación)
-- [ ] Detalle de cobro: avance global, participantes, obligaciones, pagos
+- [x] Detalle de cobro: avance global, participantes, saldo y estado por obligación (pagos: ver detalle de obligación)
 - [ ] Inicio: tarjetas por cobrar/recaudado/vencido, pagos recientes, próximos vencimientos, filtro por espacio
 - [ ] Lista de Cobros buscable con filtros por estado/espacio
 - [ ] FAB contextual (espacio, cobro, persona, abono)
@@ -316,3 +316,4 @@
 - 2026-11-17: `PaymentsRepository` (register/confirm/reject/void, exceso rechazado, revalidación al confirmar, auditoría transaccional) + 12 tests; `CollectedLookup` conectado a pagos confirmados.
 - 2026-11-17: `AttachmentsRepository` (+7 tests, dependencia `crypto`).
 - 2026-11-17: Plan de cuotas + `AllocationService` (FIFO, derivado) + guard de importe con plan; `PaymentsRepository` reasigna al confirmar/anular. Capa de dominio/datos de Fase 2 completa; falta toda la UI de abonos, dashboard y búsqueda.
+- 2026-11-17: UI: detalle de obligación (saldo, plan, abonos), formulario de abono con comprobantes, totales/estados en detalle de cobro; `BalancesRepository` (lotes + totales globales). Falta detalle de abono, pantalla de plan, dashboard, búsqueda.

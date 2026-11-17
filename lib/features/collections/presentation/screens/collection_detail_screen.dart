@@ -8,7 +8,9 @@ import '../../../../core/providers/repository_providers.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../../../receivables/domain/receivable_errors.dart';
 import '../../../contacts/presentation/providers/contacts_providers.dart';
+import '../../../receivables/domain/balance_calculator.dart';
 import '../../../receivables/presentation/providers/receivables_providers.dart';
+import '../../../receivables/presentation/widgets/status_chip.dart';
 import '../../domain/collection_labels.dart';
 import '../providers/collections_providers.dart';
 
@@ -88,34 +90,58 @@ class CollectionDetailScreen extends ConsumerWidget {
               child: Text('No se pudieron cargar las obligaciones\n$e'),
             ),
             data: (list) {
-              final total = list
-                  .where((r) => r.cancelledAt == null)
-                  .fold<int>(0, (s, r) => s + r.principalMinor);
+              final balances =
+                  ref
+                      .watch(collectionBalancesProvider(collectionId))
+                      .asData
+                      ?.value ??
+                  const {};
+              final totals = BalanceCalculator.totals(balances.values.toList());
+              String m(int v) => Money.minor(v).format();
               return ListView(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
                 children: [
                   Card(
-                    child: ListTile(
-                      title: Text(collectionKindLabel(c.kind)),
-                      subtitle: Text(
-                        '${list.length} participante(s)'
-                        '${c.fundsOwnership == 'third_party' ? ' · Fondos de terceros' : ''}',
-                      ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Comprometido',
-                            style: TextStyle(fontSize: 11),
-                          ),
                           Text(
-                            Money.minor(total).format(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                            '${collectionKindLabel(c.kind)} · ${totals.participants} participante(s)'
+                            '${c.fundsOwnership == 'third_party' ? ' · Fondos de terceros' : ''}',
                           ),
+                          const SizedBox(height: 12),
+                          LinearProgressIndicator(
+                            value: totals.progress.clamp(0.0, 1.0),
+                            minHeight: 8,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${(totals.progress * 100).toStringAsFixed(1)}% recaudado',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _Stat('Comprometido', m(totals.committedMinor)),
+                              _Stat('Recaudado', m(totals.collectedMinor)),
+                              _Stat('Pendiente', m(totals.pendingMinor)),
+                            ],
+                          ),
+                          if (totals.overdueMinor > 0)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Vencido: ${m(totals.overdueMinor)}',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -129,7 +155,7 @@ class CollectionDetailScreen extends ConsumerWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  for (final r in list) _ReceivableTile(r),
+                  for (final r in list) _ReceivableTile(r, balances[r.id]),
                 ],
               );
             },
@@ -140,9 +166,25 @@ class CollectionDetailScreen extends ConsumerWidget {
   }
 }
 
+class _Stat extends StatelessWidget {
+  const _Stat(this.label, this.value);
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: const TextStyle(fontSize: 11)),
+      Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+    ],
+  );
+}
+
 class _ReceivableTile extends ConsumerWidget {
-  const _ReceivableTile(this.r);
+  const _ReceivableTile(this.r, this.balance);
   final Receivable r;
+  final Balance? balance;
 
   Future<void> _edit(BuildContext context, WidgetRef ref) async {
     final ctrl = TextEditingController(
@@ -226,7 +268,20 @@ class _ReceivableTile extends ConsumerWidget {
     return ListTile(
       leading: const CircleAvatar(child: Icon(Icons.person_outline)),
       title: Text(name),
-      subtitle: cancelled ? const Text('Cancelada') : null,
+      onTap: () => context.push('/obligaciones/${r.id}'),
+      subtitle: balance == null
+          ? null
+          : Wrap(
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                ReceivableStatusChip(balance!.status),
+                if (!cancelled)
+                  Text(
+                    'Saldo ${Money.minor(balance!.balanceMinor, currency: r.currency).format()}',
+                  ),
+              ],
+            ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

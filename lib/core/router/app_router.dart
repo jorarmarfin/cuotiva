@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/collections/presentation/screens/collection_detail_screen.dart';
 import '../../features/collections/presentation/screens/collection_form_screen.dart';
 import '../../features/collections/presentation/screens/collections_screen.dart';
+import '../../features/payments/presentation/screens/payment_form_screen.dart';
 import '../../features/receivables/presentation/screens/assign_receivables_screen.dart';
+import '../../features/receivables/presentation/screens/receivable_detail_screen.dart';
 import '../../features/contacts/presentation/screens/contact_detail_screen.dart';
 import '../../features/contacts/presentation/screens/contact_form_screen.dart';
 import '../../features/contacts/presentation/screens/contacts_screen.dart';
@@ -96,6 +98,16 @@ final appRouter = GoRouter(
       path: '/cobros/:id/asignar',
       builder: (_, s) =>
           AssignReceivablesScreen(collectionId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/obligaciones/:id',
+      builder: (_, s) =>
+          ReceivableDetailScreen(receivableId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/obligaciones/:id/abono',
+      builder: (_, s) =>
+          PaymentFormScreen(receivableId: s.pathParameters['id']!),
     ),
     GoRoute(path: '/ajustes', builder: (_, _) => const SettingsScreen()),
     GoRoute(path: '/credits', builder: (_, _) => const CreditsScreen()),

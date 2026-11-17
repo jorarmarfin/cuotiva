@@ -17,6 +17,9 @@ part 'app_database.g.dart';
     Installments,
     AuditLogs,
     AppSettings,
+    Payments,
+    PaymentAllocations,
+    Attachments,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -24,18 +27,40 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'cuotiva'));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
       await _createIndexes();
+      await _createPaymentIndexes();
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(payments);
+        await m.createTable(paymentAllocations);
+        await m.createTable(attachments);
+        await _createPaymentIndexes();
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
   );
+
+  /// v2: pagos, asignaciones y adjuntos.
+  Future<void> _createPaymentIndexes() async {
+    for (final sql in const [
+      'CREATE INDEX idx_payments_receivable ON payments(receivable_id)',
+      'CREATE INDEX idx_payments_occurred ON payments(occurred_at)',
+      'CREATE INDEX idx_allocations_payment ON payment_allocations(payment_id)',
+      'CREATE INDEX idx_allocations_installment ON payment_allocations(installment_id)',
+      'CREATE INDEX idx_attachments_payment ON attachments(payment_id)',
+    ]) {
+      await customStatement(sql);
+    }
+  }
 
   Future<void> _createIndexes() async {
     for (final sql in const [

@@ -91,3 +91,52 @@ class AppSettings extends Table {
   @override
   Set<Column> get primaryKey => {key};
 }
+
+/// Abonos. Solo `confirmed` descuenta saldo (CUOTIVA_SPEC §4.2).
+class Payments extends Table with BaseTable {
+  TextColumn get receivableId => text().references(Receivables, #id)();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currency => text().withDefault(const Constant('PEN'))();
+  DateTimeColumn get occurredAt => dateTime()();
+  // cash | yape | plin | transfer | card | other
+  TextColumn get method => text().withDefault(const Constant('cash'))();
+  // pending_verification | confirmed | rejected | voided
+  TextColumn get status =>
+      text().withDefault(const Constant('pending_verification'))();
+  TextColumn get reference => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get verifiedAt => dateTime().nullable()();
+  DateTimeColumn get voidedAt => dateTime().nullable()();
+  TextColumn get voidReason => text().nullable()();
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (amount_minor > 0)',
+    "CHECK (status IN ('pending_verification','confirmed','rejected','voided'))",
+    "CHECK (method IN ('cash','yape','plin','transfer','card','other'))",
+  ];
+}
+
+/// Parte de un pago aplicada a una cuota. Sin plan de cuotas el pago
+/// afecta directamente el saldo de la obligación.
+class PaymentAllocations extends Table with BaseTable {
+  TextColumn get paymentId => text().references(Payments, #id)();
+  TextColumn get installmentId => text().references(Installments, #id)();
+  IntColumn get amountMinor => integer()();
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (amount_minor > 0)',
+    'UNIQUE (payment_id, installment_id)',
+  ];
+}
+
+/// Comprobantes (copiados al almacenamiento privado de la app).
+class Attachments extends Table with BaseTable {
+  TextColumn get paymentId => text().references(Payments, #id)();
+  TextColumn get relativePath => text()();
+  TextColumn get mimeType => text()();
+  IntColumn get byteSize => integer()();
+  TextColumn get checksum => text()();
+  BoolColumn get encrypted => boolean().withDefault(const Constant(false))();
+}

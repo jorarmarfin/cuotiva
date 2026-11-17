@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 2 — Cobros y abonos
 - **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: Fase 2 — tablas `payments`/`payment_allocations`/`attachments` (schema v2 + migración) y calculadora de saldos con tests primero
+- **Próximo paso concreto**: calculadora de saldos pura (`BalanceCalculator`) con tests primero; luego casos de uso de pagos (registrar/confirmar/rechazar/anular)
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -124,7 +124,7 @@
 ### Entregables (Definición de Done)
 
 #### Datos / dominio
-- [ ] Tablas `payments`, `payment_allocations`, `attachments`
+- [x] Tablas `payments`, `payment_allocations`, `attachments` (esquema v2 + migración v1→v2 verificada con SchemaVerifier)
 - [ ] Calculadora de saldos (§4.1): saldo, recaudado, estados derivados (`pending/partial/paid/overdue/cancelled`) — pura y testeada
 - [ ] Casos de uso transaccionales: registrar abono, confirmar, rechazar, anular con motivo (+ auditoría en misma transacción)
 - [ ] Reglas: pago > saldo rechazado con mensaje; pendiente no descuenta; pagada solo con saldo confirmado 0
@@ -311,3 +311,4 @@
 - 2026-11-17: Fase 0 completada; Fase 1 iniciada (Money).
 - 2026-11-17: Fase 1 completada (APK debug compila).
 - 2026-11-17: `AppUpdateService` (in_app_update, actualización flexible de Play al arrancar + botón manual en Ajustes). Solo funciona con instalación desde Play.
+- 2026-11-17: Fase 2 iniciada: esquema v2 (payments, payment_allocations, attachments) con migración probada (`drift_schemas/`, `test/drift/`). Al cambiar el esquema: `dart run drift_dev schema dump` + `schema generate`.

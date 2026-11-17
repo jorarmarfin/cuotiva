@@ -5,6 +5,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/database/audit_service.dart';
 import '../../../core/money/money.dart';
 import '../../receivables/domain/balance_calculator.dart';
+import '../../installments/data/allocation_service.dart';
 import '../domain/payment_errors.dart';
 import '../domain/payment_options.dart';
 
@@ -14,12 +15,14 @@ import '../domain/payment_options.dart';
 /// - un pago confirmado solo se revierte con anulación motivada (sin borrar);
 /// - cada cambio se audita en la misma transacción.
 class PaymentsRepository {
-  PaymentsRepository(this._db, this._audit, this._uuid, this._clock);
+  PaymentsRepository(this._db, this._audit, this._uuid, this._clock)
+    : _allocations = AllocationService(_db, _uuid, _clock);
 
   final AppDatabase _db;
   final AuditService _audit;
   final Uuid _uuid;
   final DateTime Function() _clock;
+  final AllocationService _allocations;
 
   Stream<List<Payment>> watchByReceivable(String receivableId) =>
       (_db.select(_db.payments)
@@ -140,6 +143,7 @@ class PaymentsRepository {
           'status': confirmNow ? 'confirmed' : 'pending_verification',
         },
       );
+      if (confirmNow) await _allocations.reallocate(receivableId);
       return (await find(id))!;
     });
   }
@@ -171,6 +175,7 @@ class PaymentsRepository {
       oldValues: {'status': p.status},
       newValues: {'status': 'confirmed', 'amountMinor': p.amountMinor},
     );
+    await _allocations.reallocate(p.receivableId);
   });
 
   /// pending_verification → rejected.
@@ -235,6 +240,7 @@ class PaymentsRepository {
       oldValues: {'status': p.status, 'amountMinor': p.amountMinor},
       newValues: {'status': 'voided', 'reason': why},
     );
+    await _allocations.reallocate(p.receivableId);
   });
 
   Future<Payment> _require(String id) async {

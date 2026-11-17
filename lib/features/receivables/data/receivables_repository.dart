@@ -100,6 +100,14 @@ class ReceivablesRepository {
     if (old.cancelledAt != null) {
       throw ReceivableException('La obligación está cancelada');
     }
+    final plan = await (_db.select(
+      _db.installments,
+    )..where((i) => i.receivableId.equals(id))).get();
+    if (plan.isNotEmpty && principal.minor != old.principalMinor) {
+      throw ReceivableException(
+        'Tiene un plan de cuotas: ajusta el plan para cambiar el importe',
+      );
+    }
     final collected = await _collected(id);
     if (principal.minor < collected) {
       throw ReceivableException(

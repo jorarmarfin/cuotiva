@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 2 — Cobros y abonos
 - **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: plan de cuotas (`InstallmentsRepository`: generar/editar con suma exacta + asignación de pagos) y luego UI de Registrar abono
+- **Próximo paso concreto**: UI de Registrar abono (importe, fecha, medio, referencia, imágenes con image_picker, confirmar ahora/por verificar) y Detalle de abono
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -128,7 +128,7 @@
 - [x] Calculadora de saldos (§4.1): saldo, recaudado, estados derivados (`pending/partial/paid/overdue/cancelled`) — pura y testeada (`BalanceCalculator`)
 - [x] Casos de uso transaccionales: registrar abono, confirmar, rechazar, anular con motivo (+ auditoría en misma transacción) — `PaymentsRepository`
 - [x] Reglas: pago > saldo rechazado con mensaje; pendiente no descuenta; pagada solo con saldo confirmado 0
-- [ ] Plan de cuotas: generar/editar, validar suma == total; asignación de pagos a cuotas
+- [x] Plan de cuotas: generar/editar, validar suma == total; asignación de pagos a cuotas (`InstallmentPlanner`, `InstallmentsRepository`, `AllocationService` derivada y recalculable)
 - [~] Adjuntos: repositorio hecho (copia a almacenamiento privado, SHA-256, verify, quitar solo si pendiente); falta integrar `image_picker` en la UI (cifrado real en Fase 4)
 
 #### Frontend
@@ -141,7 +141,7 @@
 - [ ] FAB contextual (espacio, cobro, persona, abono)
 
 #### Tests
-- [~] Unit: HECHO (calculadora, audit trail de anulación, rechazo de exceso, revalidación al confirmar); FALTA cuotas con suma exacta
+- [x] Unit: calculadora, audit trail de anulación, rechazo de exceso, revalidación al confirmar, cuotas con suma exacta y fechas de fin de mes
 - [x] Integración (repositorio): flujo 1-5 de §12 (S/120 → 30, 40 pendiente, confirmar, 50 → paid)
 - [ ] Integración: campaña de 20 participantes, balance = suma de obligaciones
 
@@ -315,3 +315,4 @@
 - 2026-11-17: `BalanceCalculator` (saldo, estados derivados, totales de cobro) con 17 tests.
 - 2026-11-17: `PaymentsRepository` (register/confirm/reject/void, exceso rechazado, revalidación al confirmar, auditoría transaccional) + 12 tests; `CollectedLookup` conectado a pagos confirmados.
 - 2026-11-17: `AttachmentsRepository` (+7 tests, dependencia `crypto`).
+- 2026-11-17: Plan de cuotas + `AllocationService` (FIFO, derivado) + guard de importe con plan; `PaymentsRepository` reasigna al confirmar/anular. Capa de dominio/datos de Fase 2 completa; falta toda la UI de abonos, dashboard y búsqueda.

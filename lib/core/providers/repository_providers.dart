@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../features/collections/data/collections_repository.dart';
 import '../../features/contacts/data/contacts_repository.dart';
+import '../../features/installments/data/installments_repository.dart';
 import '../../features/payments/data/attachments_repository.dart';
 import '../../features/payments/data/payments_repository.dart';
 import '../../features/receivables/data/receivables_repository.dart';
@@ -47,6 +48,15 @@ final collectionsRepositoryProvider = Provider<CollectionsRepository>(
 
 final paymentsRepositoryProvider = Provider<PaymentsRepository>(
   (ref) => PaymentsRepository(
+    ref.watch(appDatabaseProvider),
+    ref.watch(auditServiceProvider),
+    ref.watch(uuidProvider),
+    ref.watch(clockProvider),
+  ),
+);
+
+final installmentsRepositoryProvider = Provider<InstallmentsRepository>(
+  (ref) => InstallmentsRepository(
     ref.watch(appDatabaseProvider),
     ref.watch(auditServiceProvider),
     ref.watch(uuidProvider),

@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/repository_providers.dart';
+import '../../../../core/money/money.dart';
 import '../../../../core/widgets/app_loader.dart';
+import '../../../collections/presentation/providers/collections_providers.dart';
+import '../../../receivables/presentation/providers/receivables_providers.dart';
 import '../providers/contacts_providers.dart';
 
 class ContactDetailScreen extends ConsumerWidget {
@@ -88,11 +91,60 @@ class ContactDetailScreen extends ConsumerWidget {
                 ),
               const Divider(),
               const Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'El historial de obligaciones y pagos aparecerá aquí.',
+                  'Obligaciones',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
+              ref
+                  .watch(receivablesByContactProvider(contactId))
+                  .when(
+                    loading: () => const LinearProgressIndicator(),
+                    error: (e, _) => Text('Error: $e'),
+                    data: (list) {
+                      if (list.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            'Esta persona aún no tiene obligaciones.',
+                          ),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          for (final r in list)
+                            ListTile(
+                              leading: const Icon(Icons.assignment_outlined),
+                              title: Text(
+                                ref
+                                    .watch(
+                                      collectionByIdProvider(r.collectionId),
+                                    )
+                                    .maybeWhen(
+                                      data: (c) => c?.title ?? 'Cobro',
+                                      orElse: () => '…',
+                                    ),
+                              ),
+                              subtitle: r.cancelledAt != null
+                                  ? const Text('Cancelada')
+                                  : null,
+                              trailing: Text(
+                                Money.minor(
+                                  r.principalMinor,
+                                  currency: r.currency,
+                                ).format(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onTap: () =>
+                                  context.push('/cobros/${r.collectionId}'),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
             ],
           ),
         );

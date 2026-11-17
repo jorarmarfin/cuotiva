@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 1 — Núcleo de datos
 - **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: cerrar Fase 1: historial de obligaciones en detalle de persona, editar importe/cancelar obligación desde UI, docs (diagrama de modelo + ADR), revisar en dispositivo; luego Fase 2
+- **Próximo paso concreto**: validar compilación Android (`flutter build apk --debug`) y cerrar Fase 1; luego Fase 2 (tablas `payments`/`attachments`, calculadora de saldos con tests)
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -80,7 +80,7 @@
 #### Frontend
 - [x] Mis espacios: lista, crear/editar/archivar (color, ícono, descripción)
 - [x] Detalle de espacio (cabecera, editar, archivar, lista de cobros)
-- [x] Personas: lista, crear/editar, detalle (contacto global compartido entre espacios) — falta historial de obligaciones en el detalle
+- [x] Personas: lista, crear/editar, detalle con historial de obligaciones (contacto global compartido entre espacios)
 - [x] Crear/editar cobro (tipo, `funds_ownership`, fechas, notas)
 - [x] Crear obligación + asignación masiva «S/ 150 a cada participante» (pantalla Asignar personas; vencimiento por obligación pendiente)
 - [x] Estados vacío / carga / error en cada lista
@@ -92,8 +92,8 @@
 - [x] Test de migración/esquema v1 con DB en memoria
 
 #### Documentación
-- [ ] Diagrama del modelo de datos en `docs/`
-- [ ] ADR: UUID, borrado lógico, Money
+- [x] Diagrama del modelo de datos en `docs/modelo-datos.md`
+- [x] ADR 0002: UUID, borrado lógico, Money
 
 ### Posibles obstáculos
 - Sobre-modelar: no implementar saldo a favor ni multimoneda real (solo PEN, campo `currency` presente).
@@ -107,6 +107,7 @@
 - 2026-11-17: providers de repos + UI de espacios (lista/form/detalle, estados vacío/carga/error) + Inicio provisional (+5 tests UI, 34 total). Nota: Drift real dentro de `testWidgets` se cuelga; en tests de UI sobreescribir providers de stream.
 - 2026-11-17: UI de Personas (lista con búsqueda, form con validación, detalle, archivar) + FAB contextual (+3 tests UI, 37 total).
 - 2026-11-17: UI de Cobros (lista buscable, form, detalle con obligaciones y total comprometido) + Asignar personas (masivo, omite existentes) + cobros en detalle de espacio (+4 tests UI, 41 total).
+- 2026-11-17: historial en detalle de persona, editar importe / cancelar obligación desde UI, `docs/modelo-datos.md` y ADR 0002 (42 tests). Fase 1 funcionalmente completa, pendiente verificar en dispositivo.
 
 ---
 

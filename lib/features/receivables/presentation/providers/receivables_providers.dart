@@ -14,3 +14,9 @@ final receivablesByCollectionProvider =
 final allContactsProvider = StreamProvider<List<Contact>>(
   (ref) => ref.watch(contactsRepositoryProvider).watchActive(),
 );
+
+final receivablesByContactProvider =
+    StreamProvider.family<List<Receivable>, String>(
+      (ref, contactId) =>
+          ref.watch(receivablesRepositoryProvider).watchByContact(contactId),
+    );

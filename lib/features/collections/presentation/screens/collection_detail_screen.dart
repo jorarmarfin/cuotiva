@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/database/app_database.dart';
 import '../../../../core/money/money.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../../../core/widgets/app_loader.dart';
+import '../../../receivables/domain/receivable_errors.dart';
 import '../../../contacts/presentation/providers/contacts_providers.dart';
 import '../../../receivables/presentation/providers/receivables_providers.dart';
 import '../../domain/collection_labels.dart';
@@ -127,12 +129,7 @@ class CollectionDetailScreen extends ConsumerWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  for (final r in list)
-                    _ReceivableTile(
-                      r.contactId,
-                      Money.minor(r.principalMinor, currency: r.currency),
-                      r.cancelledAt != null,
-                    ),
+                  for (final r in list) _ReceivableTile(r),
                 ],
               );
             },
@@ -144,26 +141,115 @@ class CollectionDetailScreen extends ConsumerWidget {
 }
 
 class _ReceivableTile extends ConsumerWidget {
-  const _ReceivableTile(this.contactId, this.amount, this.cancelled);
-  final String contactId;
-  final Money amount;
-  final bool cancelled;
+  const _ReceivableTile(this.r);
+  final Receivable r;
+
+  Future<void> _edit(BuildContext context, WidgetRef ref) async {
+    final ctrl = TextEditingController(
+      text: (r.principalMinor / 100).toStringAsFixed(2),
+    );
+    final value = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Editar importe'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(prefixText: 'S/ '),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, ctrl.text),
+            child: const Text('Guardar'),
+          ),
+        ],
+      ),
+    );
+    ctrl.dispose();
+    if (value == null) return;
+    try {
+      await ref
+          .read(receivablesRepositoryProvider)
+          .updatePrincipal(r.id, Money.parse(value, currency: r.currency));
+    } on FormatException {
+      if (context.mounted) _toast(context, 'Importe inválido');
+    } on ReceivableException catch (e) {
+      if (context.mounted) _toast(context, e.message);
+    }
+  }
+
+  Future<void> _cancel(BuildContext context, WidgetRef ref) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Cancelar obligación?'),
+        content: const Text(
+          'Dejará de contar en el total comprometido. Queda registrada en la auditoría.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Volver'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Cancelar obligación'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ref.read(receivablesRepositoryProvider).cancel(r.id);
+    } on ReceivableException catch (e) {
+      if (context.mounted) _toast(context, e.message);
+    }
+  }
+
+  void _toast(BuildContext context, String msg) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final name = ref
-        .watch(contactByIdProvider(contactId))
+        .watch(contactByIdProvider(r.contactId))
         .maybeWhen(
           data: (c) => c?.displayName ?? 'Persona eliminada',
           orElse: () => '…',
         );
+    final cancelled = r.cancelledAt != null;
     return ListTile(
       leading: const CircleAvatar(child: Icon(Icons.person_outline)),
       title: Text(name),
       subtitle: cancelled ? const Text('Cancelada') : null,
-      trailing: Text(
-        amount.format(),
-        style: const TextStyle(fontWeight: FontWeight.w600),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            Money.minor(r.principalMinor, currency: r.currency).format(),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              decoration: cancelled ? TextDecoration.lineThrough : null,
+            ),
+          ),
+          if (!cancelled)
+            PopupMenuButton<String>(
+              onSelected: (v) =>
+                  v == 'edit' ? _edit(context, ref) : _cancel(context, ref),
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'edit', child: Text('Editar importe')),
+                PopupMenuItem(
+                  value: 'cancel',
+                  child: Text('Cancelar obligación'),
+                ),
+              ],
+            ),
+        ],
       ),
     );
   }

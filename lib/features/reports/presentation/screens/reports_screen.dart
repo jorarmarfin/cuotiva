@@ -81,6 +81,7 @@ class ReportsScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 16),
                 TextField(
                   decoration: const InputDecoration(
                     labelText: 'Persona',

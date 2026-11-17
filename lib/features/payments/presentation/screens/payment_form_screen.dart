@@ -166,7 +166,7 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
                 }
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               children: [
@@ -194,13 +194,13 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
                 labelText: 'Referencia / N.° de operación (opcional)',
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _notes,
               decoration: const InputDecoration(labelText: 'Notas (opcional)'),
               maxLines: 2,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             const Text('Comprobantes'),
             const SizedBox(height: 8),
             Wrap(

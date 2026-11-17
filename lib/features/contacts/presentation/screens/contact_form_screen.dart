@@ -104,7 +104,7 @@ class _ContactFormScreenState extends ConsumerState<ContactFormScreen> {
                         ? 'Ingresa un nombre'
                         : null,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _phone,
                     decoration: const InputDecoration(
@@ -112,7 +112,7 @@ class _ContactFormScreenState extends ConsumerState<ContactFormScreen> {
                     ),
                     keyboardType: TextInputType.phone,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _email,
                     decoration: const InputDecoration(
@@ -127,7 +127,7 @@ class _ContactFormScreenState extends ConsumerState<ContactFormScreen> {
                           : 'Correo inválido';
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _notes,
                     decoration: const InputDecoration(

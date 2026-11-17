@@ -131,7 +131,7 @@ class _SpaceFormScreenState extends ConsumerState<SpaceFormScreen> {
                         ? 'Ingresa un nombre'
                         : null,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _desc,
                     decoration: const InputDecoration(

@@ -207,11 +207,12 @@ class _InstallmentPlanScreenState extends ConsumerState<InstallmentPlanScreen> {
                   'Total a repartir: ${Money.minor(_principal).format()}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 110,
+                      width: 130,
                       child: TextField(
                         controller: _count,
                         keyboardType: TextInputType.number,
@@ -222,49 +223,57 @@ class _InstallmentPlanScreenState extends ConsumerState<InstallmentPlanScreen> {
                     ),
                     const SizedBox(width: 12),
                     OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 52),
+                      ),
                       onPressed: _generate,
                       child: const Text('Generar iguales'),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 for (var i = 0; i < _rows.length; i++)
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 14,
-                        child: Text(
-                          '${i + 1}',
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextButton.icon(
-                          icon: const Icon(Icons.event, size: 18),
-                          label: Text(fmt.format(_rows[i].dueAt)),
-                          onPressed: () => _pickDate(_rows[i]),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 110,
-                        child: TextField(
-                          controller: _rows[i].controller,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 14,
+                          child: Text(
+                            '${i + 1}',
+                            style: const TextStyle(fontSize: 12),
                           ),
-                          decoration: const InputDecoration(prefixText: 'S/ '),
-                          onChanged: (_) => setState(() {}),
                         ),
-                      ),
-                      IconButton(
-                        tooltip: 'Quitar cuota',
-                        icon: const Icon(Icons.remove_circle_outline),
-                        onPressed: () => setState(
-                          () => _rows.removeAt(i).controller.dispose(),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.event, size: 18),
+                            label: Text(fmt.format(_rows[i].dueAt)),
+                            onPressed: () => _pickDate(_rows[i]),
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 130,
+                          child: TextField(
+                            controller: _rows[i].controller,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: const InputDecoration(
+                              prefixText: 'S/ ',
+                            ),
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'Quitar cuota',
+                          icon: const Icon(Icons.remove_circle_outline),
+                          onPressed: () => setState(
+                            () => _rows.removeAt(i).controller.dispose(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 TextButton.icon(
                   icon: const Icon(Icons.add),

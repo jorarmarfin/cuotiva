@@ -21,6 +21,7 @@ Future<String?> askPin(
         key: formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          spacing: 16,
           children: [
             TextFormField(
               controller: a,

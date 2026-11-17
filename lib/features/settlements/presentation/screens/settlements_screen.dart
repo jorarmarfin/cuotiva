@@ -29,6 +29,7 @@ class SettlementsScreen extends ConsumerWidget {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              spacing: 16,
               children: [
                 TextFormField(
                   controller: amount,

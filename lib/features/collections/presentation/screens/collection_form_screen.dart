@@ -131,7 +131,7 @@ class _CollectionFormScreenState extends ConsumerState<CollectionFormScreen> {
                         ? 'Ingresa un título'
                         : null,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   spaces.when(
                     loading: () => const LinearProgressIndicator(),
                     error: (e, _) =>
@@ -162,7 +162,7 @@ class _CollectionFormScreenState extends ConsumerState<CollectionFormScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     initialValue: _kind,
                     decoration: const InputDecoration(labelText: 'Tipo'),
@@ -172,6 +172,7 @@ class _CollectionFormScreenState extends ConsumerState<CollectionFormScreen> {
                     ],
                     onChanged: (v) => setState(() => _kind = v ?? 'other'),
                   ),
+                  const SizedBox(height: 8),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('Fondos de terceros'),

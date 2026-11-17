@@ -8,6 +8,7 @@ import '../../../../core/security/pin_service.dart';
 import '../../../../core/update/app_update_service.dart';
 import '../widgets/pin_dialogs.dart';
 import '../widgets/reminder_settings_section.dart';
+import '../../../../core/widgets/home_button.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -79,7 +80,10 @@ class SettingsScreen extends ConsumerWidget {
     };
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Ajustes')),
+      appBar: AppBar(
+        title: const Text('Ajustes'),
+        actions: const [HomeButton()],
+      ),
       body: ListView(
         children: [
           const _Header('Seguridad'),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../domain/space_presets.dart';
 import '../providers/spaces_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Crear (spaceId == null) o editar un espacio.
 class SpaceFormScreen extends ConsumerStatefulWidget {
@@ -101,7 +102,10 @@ class _SpaceFormScreenState extends ConsumerState<SpaceFormScreen> {
   Widget build(BuildContext context) {
     final editing = widget.spaceId != null;
     return Scaffold(
-      appBar: AppBar(title: Text(editing ? 'Editar espacio' : 'Nuevo espacio')),
+      appBar: AppBar(
+        title: Text(editing ? 'Editar espacio' : 'Nuevo espacio'),
+        actions: const [HomeButton()],
+      ),
       body: !_loaded
           ? const Center(child: CircularProgressIndicator())
           : Form(

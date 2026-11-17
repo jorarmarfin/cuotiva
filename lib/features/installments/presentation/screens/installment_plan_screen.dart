@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/money/money.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../domain/installment_planner.dart';
+import '../../../../core/widgets/home_button.dart';
 
 class _Row {
   _Row(this.dueAt, String amount)
@@ -190,6 +191,7 @@ class _InstallmentPlanScreenState extends ConsumerState<InstallmentPlanScreen> {
       appBar: AppBar(
         title: const Text('Plan de cuotas'),
         actions: [
+          const HomeButton(),
           if (_hadPlan)
             IconButton(
               tooltip: 'Quitar plan',

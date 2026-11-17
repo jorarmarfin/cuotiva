@@ -14,6 +14,7 @@ import '../providers/payments_providers.dart';
 import '../../data/attachments_repository.dart';
 import '../../domain/payment_errors.dart';
 import '../../domain/payment_options.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Registrar un abono. Pocos toques: importe + Guardar (efectivo se confirma
 /// al instante; Yape/Plin/transferencia quedan por verificar por defecto).
@@ -170,7 +171,10 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
       _fillAmount(balance.balanceMinor, open);
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrar abono')),
+      appBar: AppBar(
+        title: const Text('Registrar abono'),
+        actions: const [HomeButton()],
+      ),
       body: Form(
         key: _form,
         child: ListView(

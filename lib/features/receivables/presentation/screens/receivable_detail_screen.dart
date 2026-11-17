@@ -12,6 +12,7 @@ import '../../../payments/presentation/providers/payments_providers.dart';
 import '../../domain/balance_calculator.dart';
 import '../providers/receivables_providers.dart';
 import '../widgets/status_chip.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Detalle de una obligación: saldo, plan de cuotas y abonos.
 class ReceivableDetailScreen extends ConsumerWidget {
@@ -50,6 +51,7 @@ class ReceivableDetailScreen extends ConsumerWidget {
           appBar: AppBar(
             title: Text(name ?? 'Obligación'),
             actions: [
+              const HomeButton(),
               IconButton(
                 tooltip: 'Estado de cuenta PDF',
                 icon: const Icon(Icons.picture_as_pdf_outlined),

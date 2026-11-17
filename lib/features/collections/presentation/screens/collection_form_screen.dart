@@ -7,6 +7,7 @@ import '../../../../core/providers/repository_providers.dart';
 import '../../../spaces/presentation/providers/spaces_providers.dart';
 import '../../domain/collection_labels.dart';
 import '../providers/collections_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Crear (collectionId == null) o editar un cobro. [spaceId] preselecciona espacio.
 class CollectionFormScreen extends ConsumerStatefulWidget {
@@ -113,7 +114,10 @@ class _CollectionFormScreenState extends ConsumerState<CollectionFormScreen> {
   Widget build(BuildContext context) {
     final spaces = ref.watch(activeSpacesProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(_editing ? 'Editar cobro' : 'Nuevo cobro')),
+      appBar: AppBar(
+        title: Text(_editing ? 'Editar cobro' : 'Nuevo cobro'),
+        actions: const [HomeButton()],
+      ),
       body: !_loaded
           ? const Center(child: CircularProgressIndicator())
           : Form(

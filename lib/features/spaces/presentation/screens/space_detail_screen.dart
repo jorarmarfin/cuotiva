@@ -8,6 +8,7 @@ import '../../../collections/domain/collection_labels.dart';
 import '../../../collections/presentation/providers/collections_providers.dart';
 import '../../domain/space_presets.dart';
 import '../providers/spaces_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 class SpaceDetailScreen extends ConsumerWidget {
   const SpaceDetailScreen({super.key, required this.spaceId});
@@ -59,6 +60,7 @@ class SpaceDetailScreen extends ConsumerWidget {
           appBar: AppBar(
             title: Text(s.name),
             actions: [
+              const HomeButton(),
               IconButton(
                 tooltip: 'Editar',
                 icon: const Icon(Icons.edit_outlined),

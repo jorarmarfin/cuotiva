@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 
 import '../../../../core/pdf/pdf_share_service.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Vista previa de un PDF con botón de compartir. Antes de compartir avisa
 /// de que el documento contiene datos personales (CUOTIVA_SPEC §6).
@@ -56,6 +57,7 @@ class PdfPreviewScaffold extends StatelessWidget {
     appBar: AppBar(
       title: Text(title),
       actions: [
+        const HomeButton(),
         IconButton(
           tooltip: 'Compartir',
           icon: const Icon(Icons.share_outlined),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../../domain/space_presets.dart';
 import '../providers/spaces_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 class SpacesScreen extends ConsumerWidget {
   const SpacesScreen({super.key});
@@ -13,7 +14,10 @@ class SpacesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final spaces = ref.watch(activeSpacesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis espacios')),
+      appBar: AppBar(
+        title: const Text('Mis espacios'),
+        actions: const [HomeButton()],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/espacios/nuevo'),
         icon: const Icon(Icons.add),

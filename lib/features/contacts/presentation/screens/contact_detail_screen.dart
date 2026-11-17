@@ -8,6 +8,7 @@ import '../../../../core/widgets/app_loader.dart';
 import '../../../collections/presentation/providers/collections_providers.dart';
 import '../../../receivables/presentation/providers/receivables_providers.dart';
 import '../providers/contacts_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 class ContactDetailScreen extends ConsumerWidget {
   const ContactDetailScreen({super.key, required this.contactId});
@@ -59,6 +60,7 @@ class ContactDetailScreen extends ConsumerWidget {
           appBar: AppBar(
             title: Text(c.displayName),
             actions: [
+              const HomeButton(),
               IconButton(
                 tooltip: 'Editar',
                 icon: const Icon(Icons.edit_outlined),

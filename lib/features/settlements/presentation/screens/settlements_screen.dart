@@ -9,6 +9,7 @@ import '../../../../core/widgets/app_loader.dart';
 import '../../domain/settlement_errors.dart';
 import '../providers/settlements_providers.dart';
 import '../widgets/settlement_summary_card.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Entregas del dinero recaudado a su destinatario.
 class SettlementsScreen extends ConsumerWidget {
@@ -146,7 +147,10 @@ class SettlementsScreen extends ConsumerWidget {
     final df = DateFormat('d MMM y', 'es');
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Rendiciones')),
+      appBar: AppBar(
+        title: const Text('Rendiciones'),
+        actions: const [HomeButton()],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _register(context, ref),
         icon: const Icon(Icons.outbox_outlined),

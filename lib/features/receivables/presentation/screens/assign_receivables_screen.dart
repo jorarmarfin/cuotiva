@@ -6,6 +6,7 @@ import '../../../../core/money/money.dart';
 import '../../../../core/providers/repository_providers.dart';
 import '../../../../core/widgets/app_loader.dart';
 import '../providers/receivables_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Asigna un mismo importe a una o varias personas (ej. S/ 150 a cada padre).
 class AssignReceivablesScreen extends ConsumerStatefulWidget {
@@ -74,6 +75,7 @@ class _AssignReceivablesScreenState
       appBar: AppBar(
         title: const Text('Asignar personas'),
         actions: [
+          const HomeButton(),
           IconButton(
             tooltip: 'Nueva persona',
             icon: const Icon(Icons.person_add_alt),

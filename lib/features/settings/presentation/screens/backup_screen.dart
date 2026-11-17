@@ -12,6 +12,7 @@ import '../../../../core/backup/backup_service.dart';
 import '../../../../core/pdf/pdf_share_service.dart';
 import '../../../../core/providers/core_providers.dart';
 import '../../../../core/providers/repository_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Respaldo y restauración cifrados con frase de recuperación.
 class BackupScreen extends ConsumerStatefulWidget {
@@ -158,7 +159,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Respaldo y restauración')),
+      appBar: AppBar(
+        title: const Text('Respaldo y restauración'),
+        actions: const [HomeButton()],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

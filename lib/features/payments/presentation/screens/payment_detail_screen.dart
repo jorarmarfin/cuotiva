@@ -14,6 +14,7 @@ import '../../data/attachments_repository.dart';
 import '../../domain/payment_errors.dart';
 import '../../domain/payment_options.dart';
 import '../providers/payments_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 const _actionLabels = {
   'register': 'Registrado',
@@ -124,7 +125,10 @@ class PaymentDetailScreen extends ConsumerWidget {
         final pending = p.status == 'pending_verification';
         final confirmed = p.status == 'confirmed';
         return Scaffold(
-          appBar: AppBar(title: const Text('Detalle de abono')),
+          appBar: AppBar(
+            title: const Text('Detalle de abono'),
+            actions: const [HomeButton()],
+          ),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [

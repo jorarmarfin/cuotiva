@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/repository_providers.dart';
 import '../providers/contacts_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 /// Crear (contactId == null) o editar una persona.
 class ContactFormScreen extends ConsumerStatefulWidget {
@@ -88,7 +89,10 @@ class _ContactFormScreenState extends ConsumerState<ContactFormScreen> {
   Widget build(BuildContext context) {
     final editing = widget.contactId != null;
     return Scaffold(
-      appBar: AppBar(title: Text(editing ? 'Editar persona' : 'Nueva persona')),
+      appBar: AppBar(
+        title: Text(editing ? 'Editar persona' : 'Nueva persona'),
+        actions: const [HomeButton()],
+      ),
       body: !_loaded
           ? const Center(child: CircularProgressIndicator())
           : Form(

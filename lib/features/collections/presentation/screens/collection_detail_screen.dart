@@ -14,6 +14,7 @@ import '../../../receivables/presentation/widgets/status_chip.dart';
 import '../../../settlements/presentation/widgets/settlement_summary_card.dart';
 import '../../domain/collection_labels.dart';
 import '../providers/collections_providers.dart';
+import '../../../../core/widgets/home_button.dart';
 
 class CollectionDetailScreen extends ConsumerWidget {
   const CollectionDetailScreen({super.key, required this.collectionId});
@@ -68,6 +69,7 @@ class CollectionDetailScreen extends ConsumerWidget {
           appBar: AppBar(
             title: Text(c.title),
             actions: [
+              const HomeButton(),
               IconButton(
                 tooltip: 'Reporte PDF',
                 icon: const Icon(Icons.picture_as_pdf_outlined),

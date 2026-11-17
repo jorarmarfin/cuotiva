@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 1 — Núcleo de datos
 - **Progreso**: 1 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: repositorios + casos de uso + `AuditService` (spaces, contacts, collections, receivables)
+- **Próximo paso concreto**: repositorios de cobros y obligaciones (+ asignación masiva, regla de no reducir bajo lo cobrado) y providers Riverpod
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -75,7 +75,7 @@
 - [x] FK, índices (§8), CHECK de montos positivos / estados válidos
 - [x] Esquema v1 + estrategia de migraciones (`schemaVersion`, `stepByStep`)
 - [ ] Repositorios + casos de uso en `domain/` por feature (sin SQL en UI)
-- [ ] Servicio de auditoría reutilizable (escritura dentro de la misma transacción)
+- [x] Servicio de auditoría reutilizable (escritura dentro de la misma transacción)
 
 #### Frontend
 - [ ] Mis espacios: lista, crear/editar/archivar (color, ícono, descripción)
@@ -102,6 +102,7 @@
 ### Notas de avance
 - 2026-11-17: `Money` + 9 tests listos (parse, format, split, sin double).
 - 2026-11-17: esquema Drift v1 (7 tablas, FK, CHECK, UNIQUE contacto/cobro, índices) + 5 tests. `payments`/`attachments`/`settlements` van en Fases 2-3.
+- 2026-11-17: `AuditService` + `SpacesRepository` + `ContactsRepository` (+5 tests).
 
 ---
 

@@ -1,3 +1,5 @@
+import 'package:cuotiva/core/providers/core_providers.dart';
+import 'package:cuotiva/features/onboarding/presentation/providers/onboarding_providers.dart';
 import 'package:cuotiva/app/app.dart';
 import 'package:cuotiva/features/dashboard/presentation/providers/dashboard_providers.dart';
 import 'package:cuotiva/features/receivables/domain/balance_calculator.dart';
@@ -14,6 +16,8 @@ void main() {
       ProviderScope(
         // Sin abrir la base real: los datos del Inicio se sobreescriben.
         overrides: [
+          startupTasksEnabledProvider.overrideWithValue(false),
+          onboardingDoneProvider.overrideWith((_) async => true),
           dashboardTotalsProvider.overrideWith(
             (_) => Stream.value(
               const CollectionTotals(

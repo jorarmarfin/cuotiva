@@ -28,3 +28,7 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
 final clockProvider = Provider<DateTime Function()>((_) => DateTime.now);
 
 final uuidProvider = Provider<Uuid>((_) => const Uuid());
+
+/// Tareas de arranque (cifrar comprobantes heredados, recordatorios).
+/// Los tests de UI las desactivan para no abrir la base real.
+final startupTasksEnabledProvider = Provider<bool>((_) => true);

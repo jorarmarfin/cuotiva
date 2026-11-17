@@ -7,6 +7,7 @@ import '../../../../core/security/lock_settings.dart';
 import '../../../../core/security/pin_service.dart';
 import '../../../../core/update/app_update_service.dart';
 import '../widgets/pin_dialogs.dart';
+import '../widgets/reminder_settings_section.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -139,6 +140,9 @@ class SettingsScreen extends ConsumerWidget {
             value: s.secureScreen,
             onChanged: (v) => ctrl.updateSettings(s.copyWith(secureScreen: v)),
           ),
+          const Divider(),
+          const _Header('Notificaciones'),
+          const ReminderSettingsSection(),
           const Divider(),
           const _Header('Datos'),
           ListTile(

@@ -13,6 +13,10 @@ import '../../features/settlements/data/settlements_repository.dart';
 import '../../features/spaces/data/spaces_repository.dart';
 import '../backup/backup_service.dart';
 import '../database/audit_service.dart';
+import '../notifications/notification_service.dart';
+import '../notifications/reminder_scheduler.dart';
+import '../../features/settings/data/reminders_repository.dart';
+import '../../features/settings/data/settings_repository.dart';
 import '../security/crypto_service.dart';
 import '../security/db_key_service.dart';
 import 'core_providers.dart';
@@ -136,4 +140,23 @@ final backupServiceProvider = FutureProvider<BackupService>((ref) async {
     schemaVersion: db.schemaVersion,
     clock: ref.watch(clockProvider),
   );
+});
+
+final settingsRepositoryProvider = Provider<SettingsRepository>(
+  (ref) => SettingsRepository(ref.watch(appDatabaseProvider)),
+);
+
+final reminderSinkProvider = Provider<ReminderSink>(
+  (_) => LocalNotificationSink(),
+);
+
+final reminderSchedulerProvider = Provider<ReminderScheduler>((ref) {
+  final s = ReminderScheduler(
+    ref.watch(settingsRepositoryProvider),
+    RemindersRepository(ref.watch(appDatabaseProvider)),
+    ref.watch(reminderSinkProvider),
+    ref.watch(clockProvider),
+  );
+  ref.onDispose(s.dispose);
+  return s;
 });

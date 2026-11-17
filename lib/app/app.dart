@@ -5,11 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../core/constants/app_constants.dart';
+import '../core/providers/core_providers.dart';
 import '../core/providers/repository_providers.dart';
 import '../core/router/app_router.dart';
 import '../core/theme/app_theme.dart';
 import '../core/update/app_update_service.dart';
 import '../core/widgets/lock_screen.dart';
+import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 
 class CuotivaApp extends ConsumerStatefulWidget {
   const CuotivaApp({super.key, this.startupMessage});
@@ -29,7 +31,10 @@ class _CuotivaAppState extends ConsumerState<CuotivaApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       unawaited(AppUpdateService.instance.checkAndDownload());
       // Comprobantes de versiones previas al cifrado.
-      unawaited(_encryptPending());
+      if (ref.read(startupTasksEnabledProvider)) {
+        unawaited(_encryptPending());
+        ref.read(reminderSchedulerProvider).start();
+      }
       final msg = widget.startupMessage;
       if (msg != null) {
         rootMessengerKey.currentState?.showSnackBar(
@@ -62,7 +67,8 @@ class _CuotivaAppState extends ConsumerState<CuotivaApp> {
       theme: AppTheme.light,
       themeMode: ThemeMode.light, // modo oscuro: mejora posterior (spec §6)
       routerConfig: appRouter,
-      builder: (context, child) => LockGate(child: child ?? const SizedBox()),
+      builder: (context, child) =>
+          LockGate(child: OnboardingGate(child: child ?? const SizedBox())),
       locale: const Locale('es', 'PE'),
       supportedLocales: const [Locale('es', 'PE'), Locale('es')],
       localizationsDelegates: const [

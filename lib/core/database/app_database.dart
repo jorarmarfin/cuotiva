@@ -1,13 +1,12 @@
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
 
 import 'tables.dart';
 
 part 'app_database.g.dart';
 
 /// Base de datos local de Cuotiva.
-/// El `QueryExecutor` es inyectable para tests (en memoria) y para
-/// migrar a SQLCipher en la Fase 4.
+/// El `QueryExecutor` se inyecta: SQLCipher en la app (`openEncrypted`),
+/// en memoria en tests.
 @DriftDatabase(
   tables: [
     Spaces,
@@ -24,8 +23,7 @@ part 'app_database.g.dart';
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? executor])
-    : super(executor ?? driftDatabase(name: 'cuotiva'));
+  AppDatabase(super.e);
 
   @override
   int get schemaVersion => 3;

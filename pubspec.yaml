@@ -46,6 +46,7 @@ dependencies:
   image_picker: ^1.1.2
   crypto: ^3.0.8
   image: ^4.13.1
+  sqlite3: ^3.9.1
 
 dev_dependencies:
   flutter_test:
@@ -74,3 +75,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+
+# Cifrado de la base de datos (Fase 4, ADR 0004): SQLCipher en vez de SQLite.
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlcipher

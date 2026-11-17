@@ -216,7 +216,7 @@
 ### Entregables (Definición de Done)
 
 #### Seguridad
-- [ ] Decisión documentada (ADR) y migración a SQLite cifrado (SQLCipher validado con Drift); clave en `flutter_secure_storage`
+- [x] Decisión documentada (ADR 0004) y migración a SQLite cifrado (SQLCipher validado con Drift); clave en `flutter_secure_storage`
 - [ ] PIN con derivación robusta (KDF) + sal; biometría con `local_auth`
 - [ ] Bloqueo al volver de segundo plano, período de gracia configurable, FLAG_SECURE opcional
 - [ ] Cifrado de adjuntos en disco
@@ -249,7 +249,7 @@
 - Restauración fallida a medias → restaurar a ubicación temporal y swap atómico.
 
 ### Notas de avance
--
+- 2026-11-17: spike SQLCipher OK (host y APK debug). `openEncrypted` + `DbKeyService` + migración plano→cifrado (+5 tests). `AppDatabase` ya no abre SQLite plano por defecto.
 
 ---
 

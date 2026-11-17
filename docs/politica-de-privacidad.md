@@ -1,6 +1,6 @@
 # Política de privacidad (borrador)
 
-> Borrador para revisión legal antes de publicar en Google Play.
+> Versión publicada en el portal: https://luisitomayta.com/apps/cuotiva/politica-de-privacidad (fuente: `src/pages/apps/cuotiva/politica-de-privacidad.astro` del proyecto luisitomayta). Mantener ambas en sincronía.
 
 **Qué datos maneja Cuotiva.** Los que tú registras: personas (nombre, teléfono, correo, notas),
 cobros, abonos, imágenes de comprobantes y rendiciones.
@@ -24,4 +24,4 @@ posible recuperarlo.
 **Eliminación.** Desinstalar la app o borrar sus datos elimina la base, los comprobantes y las
 claves. Los respaldos exportados que hayas guardado fuera de la app permanecen bajo tu control.
 
-**Contacto.** Pendiente (definir correo de soporte antes de publicar).
+**Contacto.** luis.mayta@gmail.com

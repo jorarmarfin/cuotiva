@@ -4,6 +4,7 @@ import 'package:cuotiva/features/collections/presentation/screens/collection_det
 import 'package:cuotiva/features/collections/presentation/screens/collections_screen.dart';
 import 'package:cuotiva/features/contacts/presentation/providers/contacts_providers.dart';
 import 'package:cuotiva/features/receivables/domain/balance_calculator.dart';
+import 'package:cuotiva/features/spaces/presentation/providers/spaces_providers.dart';
 import 'package:cuotiva/features/receivables/presentation/providers/receivables_providers.dart';
 import 'package:cuotiva/features/receivables/presentation/screens/assign_receivables_screen.dart';
 import 'package:flutter/material.dart';
@@ -41,27 +42,151 @@ void main() {
 
   setUpAll(() => initializeDateFormatting('es'));
 
+  List<Override> listOverrides(
+    List<Collection> items,
+    Map<String, CollectionTotals> totals, {
+    List<Space> spaces = const [],
+  }) => [
+    collectionsProvider.overrideWith((_) => Stream.value(items)),
+    collectionTotalsProvider.overrideWith((_) => Stream.value(totals)),
+    activeSpacesProvider.overrideWith((_) => Stream.value(spaces)),
+  ];
+
+  Future<void> settle(WidgetTester t) async {
+    for (var i = 0; i < 4; i++) {
+      await t.pump();
+    }
+  }
+
   testWidgets('lista de cobros: vacío', (tester) async {
     await tester.pumpWidget(
-      _app(const CollectionsScreen(), [
-        collectionsProvider.overrideWith((_) => Stream.value([])),
-      ]),
+      _app(const CollectionsScreen(), listOverrides([], {})),
     );
-    await tester.pump();
-    await tester.pump();
+    await settle(tester);
     expect(find.textContaining('Aún no tienes cobros'), findsOneWidget);
   });
 
-  testWidgets('lista de cobros: muestra tipo y terceros', (tester) async {
-    await tester.pumpWidget(
-      _app(const CollectionsScreen(), [
-        collectionsProvider.overrideWith((_) => Stream.value([collection])),
-      ]),
+  testWidgets('lista de cobros: espacio, saldo pendiente y terceros', (
+    tester,
+  ) async {
+    final space = Space(
+      id: 's1',
+      createdAt: now,
+      updatedAt: now,
+      name: 'Colegio',
+      type: 'school',
+      color: 1,
+      icon: 'school',
     );
-    await tester.pump();
-    await tester.pump();
+    await tester.pumpWidget(
+      _app(
+        const CollectionsScreen(),
+        listOverrides(
+          [collection],
+          {
+            'k1': const CollectionTotals(
+              committedMinor: 300000,
+              collectedMinor: 100000,
+              pendingMinor: 200000,
+              overdueMinor: 0,
+              participants: 2,
+            ),
+          },
+          spaces: [space],
+        ),
+      ),
+    );
+    await settle(tester);
     expect(find.text('Trajes 2027'), findsOneWidget);
-    expect(find.textContaining('Fondos de terceros'), findsOneWidget);
+    expect(
+      find.textContaining('Colegio · Recaudación · Fondos de terceros'),
+      findsOneWidget,
+    );
+    expect(find.text('S/ 2,000.00'), findsOneWidget);
+    expect(find.text('pendiente'), findsOneWidget);
+  });
+
+  testWidgets('filtro Vencidos oculta cobros sin deuda vencida', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        const CollectionsScreen(),
+        listOverrides(
+          [collection],
+          {
+            'k1': const CollectionTotals(
+              committedMinor: 300000,
+              collectedMinor: 0,
+              pendingMinor: 300000,
+              overdueMinor: 0,
+              participants: 2,
+            ),
+          },
+        ),
+      ),
+    );
+    await settle(tester);
+    expect(find.text('Trajes 2027'), findsOneWidget);
+    await tester.tap(find.text('Vencidos'));
+    await settle(tester);
+    expect(find.text('Trajes 2027'), findsNothing);
+    expect(find.text('Sin resultados con estos filtros.'), findsOneWidget);
+  });
+
+  test('matchesStatusFilter', () {
+    const pending = CollectionTotals(
+      committedMinor: 100,
+      collectedMinor: 0,
+      pendingMinor: 100,
+      overdueMinor: 0,
+      participants: 1,
+    );
+    const overdue = CollectionTotals(
+      committedMinor: 100,
+      collectedMinor: 0,
+      pendingMinor: 100,
+      overdueMinor: 100,
+      participants: 1,
+    );
+    const paid = CollectionTotals(
+      committedMinor: 100,
+      collectedMinor: 100,
+      pendingMinor: 0,
+      overdueMinor: 0,
+      participants: 1,
+    );
+    const empty = CollectionTotals(
+      committedMinor: 0,
+      collectedMinor: 0,
+      pendingMinor: 0,
+      overdueMinor: 0,
+      participants: 0,
+    );
+    expect(matchesStatusFilter(CollectionStatusFilter.all, null), isTrue);
+    expect(
+      matchesStatusFilter(CollectionStatusFilter.withBalance, pending),
+      isTrue,
+    );
+    expect(
+      matchesStatusFilter(CollectionStatusFilter.withBalance, paid),
+      isFalse,
+    );
+    expect(
+      matchesStatusFilter(CollectionStatusFilter.overdue, overdue),
+      isTrue,
+    );
+    expect(
+      matchesStatusFilter(CollectionStatusFilter.overdue, pending),
+      isFalse,
+    );
+    expect(matchesStatusFilter(CollectionStatusFilter.paid, paid), isTrue);
+    expect(
+      matchesStatusFilter(CollectionStatusFilter.paid, empty),
+      isFalse,
+      reason: 'sin obligaciones no es "pagado"',
+    );
+    expect(matchesStatusFilter(CollectionStatusFilter.paid, null), isFalse);
   });
 
   testWidgets('detalle: suma comprometida de obligaciones', (tester) async {

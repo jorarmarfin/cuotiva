@@ -209,4 +209,33 @@ class BalancesRepository {
         (_) =>
             upcomingDue(spaceId: spaceId, withinDays: withinDays, limit: limit),
       );
+
+  /// Totales por cobro (una sola pasada) para la lista de Cobros.
+  Future<Map<String, CollectionTotals>> totalsByCollection() async {
+    final q = _db.select(_db.receivables).join([
+      innerJoin(
+        _db.collections,
+        _db.collections.id.equalsExp(_db.receivables.collectionId),
+      ),
+    ])..where(_db.collections.archivedAt.isNull());
+    final items = [
+      for (final row in await q.get()) row.readTable(_db.receivables),
+    ];
+    final balances = await _compute(items);
+    final grouped = <String, List<Balance>>{};
+    for (final r in items) {
+      (grouped[r.collectionId] ??= []).add(balances[r.id]!);
+    }
+    return {
+      for (final e in grouped.entries) e.key: BalanceCalculator.totals(e.value),
+    };
+  }
+
+  Stream<Map<String, CollectionTotals>> watchTotalsByCollection() => _db
+      .customSelect(
+        'SELECT 1',
+        readsFrom: {_db.receivables, _db.payments, _db.collections},
+      )
+      .watch()
+      .asyncMap((_) => totalsByCollection());
 }

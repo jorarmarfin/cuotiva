@@ -11,10 +11,10 @@
 - **Timeline estimado**: ~5 semanas (2-5 días por fase)
 
 ## Estado Actual
-- **Fase activa**: Fase 2 — Cobros y abonos
-- **Progreso**: 2 de 6 fases completadas
+- **Fase activa**: Fase 3 — Documentos y rendiciones
+- **Progreso**: 3 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: búsqueda/filtros en Cobros (estado, espacio) y revisión de cierre de Fase 2 (integración 20 participantes, probar en dispositivo)
+- **Próximo paso concreto**: Fase 3 — esquema v3 con `settlements` + `SettlementsRepository` (por entregar = recaudado − entregas confirmadas, sin alterar deudas) con tests primero; luego PDF
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -112,7 +112,7 @@
 
 ---
 
-## Fase 2: Cobros y abonos (núcleo funcional) — PENDIENTE (siguiente)
+## Fase 2: Cobros y abonos (núcleo funcional) — COMPLETADA
 
 **Duración estimada**: 5 días
 **Objetivo**: cuotas, pagos con verificación, anulaciones, saldos correctos, auditoría, dashboard y búsqueda.
@@ -137,17 +137,17 @@
 - [x] Plan de cuotas (pantalla editable con validación de suma, generar iguales, quitar plan)
 - [x] Detalle de cobro: avance global, participantes, saldo y estado por obligación (pagos: ver detalle de obligación)
 - [x] Inicio: tarjetas por cobrar/recaudado/vencido, pagos recientes, próximos vencimientos, filtro por espacio (filtro por moneda: pendiente, solo PEN en V1)
-- [ ] Lista de Cobros buscable con filtros por estado/espacio
-- [ ] FAB contextual (espacio, cobro, persona, abono)
+- [x] Lista de Cobros buscable con filtros por estado/espacio (muestra espacio, avance, saldo y vencido)
+- [~] FAB contextual: espacio, cobro y persona listos; "abono" se registra desde el detalle de la obligación (el FAB global no sabe a quién abonar)
 
 #### Tests
 - [x] Unit: calculadora, audit trail de anulación, rechazo de exceso, revalidación al confirmar, cuotas con suma exacta y fechas de fin de mes
 - [x] Integración (repositorio): flujo 1-5 de §12 (S/120 → 30, 40 pendiente, confirmar, 50 → paid)
-- [ ] Integración: campaña de 20 participantes, balance = suma de obligaciones
+- [x] Integración: campaña de 20 participantes, balance = suma de obligaciones (`test/integration/spec_flows_test.dart`, también §12.10 persistencia y auditoría)
 
 #### Documentación
-- [ ] ADR: saldo derivado vs almacenado; modelo de asignaciones
-- [ ] Guía de reglas de negocio en `docs/`
+- [x] ADR 0003: saldo derivado vs almacenado; modelo de asignaciones
+- [x] Guía de reglas de negocio en `docs/reglas-de-negocio.md`
 
 ### Posibles obstáculos
 - Consistencia saldo/estado → derivar siempre, nunca guardar `status` de obligación manualmente.
@@ -159,7 +159,7 @@
 
 ---
 
-## Fase 3: Documentos y rendiciones — PENDIENTE
+## Fase 3: Documentos y rendiciones — PENDIENTE (siguiente)
 
 **Duración estimada**: 4 días
 **Objetivo**: PDFs de estado de cuenta y de campaña, compartir por sistema, fondos de terceros y rendiciones.
@@ -319,3 +319,4 @@
 - 2026-11-17: UI: detalle de obligación (saldo, plan, abonos), formulario de abono con comprobantes, totales/estados en detalle de cobro; `BalancesRepository` (lotes + totales globales). Falta detalle de abono, pantalla de plan, dashboard, búsqueda.
 - 2026-11-17: Detalle de abono (confirmar/rechazar/anular con motivo, comprobantes, historial) + pantalla de plan de cuotas. Nota test: los widgets no deben leer repositorios en `build` (abre la DB real); leerlos en callbacks.
 - 2026-11-17: Inicio con datos reales (saldo por cobrar, recaudado, vencido, avance, próximos vencimientos con `upcomingDue`, pagos recientes, filtro por espacio) + 5 tests de dominio y 4 de UI.
+- 2026-11-17: Fase 2 completada: lista de Cobros con filtros, tests de integración §12 (1-5, 8, 10), ADR 0003 y guía de reglas. 127 tests; APK debug compila. Pendiente de validar en dispositivo físico.

@@ -41,7 +41,7 @@
 
 #### Tests
 - [x] Smoke test de arranque
-- [x] CI (GitHub Actions): `pub get`, `analyze`, `test`
+- [-] CI (GitHub Actions): descartado, el usuario no lo quiere (consumía recursos de GitHub)
 
 #### Documentación
 - [x] `README.md` con comandos (§14)
@@ -271,7 +271,7 @@
 - [ ] Política de privacidad publicada y enlazada en Ajustes (mencionar consulta a Google Play)
 - [ ] Validar marca «Cuotiva» (Indecopi, Play Store, dominios)
 - [ ] Ficha de Play Store (capturas, descripción, eslogan «Cada cuota cuenta»)
-- [ ] Tests: `flutter analyze` + `flutter test` en CI verdes; smoke del AAB release en dispositivo
+- [ ] Tests: `flutter analyze` + `flutter test` locales verdes; smoke del AAB release en dispositivo
 - [x] `CHANGELOG.md` v1.0.0 y README final
 
 ### Posibles obstáculos

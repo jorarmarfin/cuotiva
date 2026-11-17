@@ -14,7 +14,7 @@
 - **Fase activa**: Fase 2 — Cobros y abonos
 - **Progreso**: 2 de 6 fases completadas
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: `PaymentsRepository` (registrar/confirmar/rechazar/anular transaccional + auditoría + rechazo de exceso) y conectar `CollectedLookup`
+- **Próximo paso concreto**: adjuntos de comprobantes (`AttachmentsRepository`, image_picker, copia a almacenamiento privado + checksum) y luego plan de cuotas
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -126,8 +126,8 @@
 #### Datos / dominio
 - [x] Tablas `payments`, `payment_allocations`, `attachments` (esquema v2 + migración v1→v2 verificada con SchemaVerifier)
 - [x] Calculadora de saldos (§4.1): saldo, recaudado, estados derivados (`pending/partial/paid/overdue/cancelled`) — pura y testeada (`BalanceCalculator`)
-- [ ] Casos de uso transaccionales: registrar abono, confirmar, rechazar, anular con motivo (+ auditoría en misma transacción)
-- [ ] Reglas: pago > saldo rechazado con mensaje; pendiente no descuenta; pagada solo con saldo confirmado 0
+- [x] Casos de uso transaccionales: registrar abono, confirmar, rechazar, anular con motivo (+ auditoría en misma transacción) — `PaymentsRepository`
+- [x] Reglas: pago > saldo rechazado con mensaje; pendiente no descuenta; pagada solo con saldo confirmado 0
 - [ ] Plan de cuotas: generar/editar, validar suma == total; asignación de pagos a cuotas
 - [ ] Adjuntos: `image_picker`, copia a almacenamiento privado, checksum (cifrado real en Fase 4)
 
@@ -141,8 +141,8 @@
 - [ ] FAB contextual (espacio, cobro, persona, abono)
 
 #### Tests
-- [~] Unit: HECHO en calculadora (múltiples pagos, pendiente no descuenta, anulado restaura saldo, vencimiento en fechas límite, totales); FALTA audit trail de anulación, rechazo de exceso, cuotas con suma exacta (casos de uso)
-- [ ] Integración: flujo 1-5 de §12 (S/120 → 30, 40 pendiente, confirmar, 50 → paid)
+- [~] Unit: HECHO (calculadora, audit trail de anulación, rechazo de exceso, revalidación al confirmar); FALTA cuotas con suma exacta
+- [x] Integración (repositorio): flujo 1-5 de §12 (S/120 → 30, 40 pendiente, confirmar, 50 → paid)
 - [ ] Integración: campaña de 20 participantes, balance = suma de obligaciones
 
 #### Documentación
@@ -313,3 +313,4 @@
 - 2026-11-17: `AppUpdateService` (in_app_update, actualización flexible de Play al arrancar + botón manual en Ajustes). Solo funciona con instalación desde Play.
 - 2026-11-17: Fase 2 iniciada: esquema v2 (payments, payment_allocations, attachments) con migración probada (`drift_schemas/`, `test/drift/`). Al cambiar el esquema: `dart run drift_dev schema dump` + `schema generate`.
 - 2026-11-17: `BalanceCalculator` (saldo, estados derivados, totales de cobro) con 17 tests.
+- 2026-11-17: `PaymentsRepository` (register/confirm/reject/void, exceso rechazado, revalidación al confirmar, auditoría transaccional) + 12 tests; `CollectedLookup` conectado a pagos confirmados.

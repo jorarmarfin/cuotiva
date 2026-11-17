@@ -4,6 +4,8 @@ import 'package:cuotiva/features/collections/presentation/screens/collection_det
 import 'package:cuotiva/features/collections/presentation/screens/collections_screen.dart';
 import 'package:cuotiva/features/contacts/presentation/providers/contacts_providers.dart';
 import 'package:cuotiva/features/receivables/domain/balance_calculator.dart';
+import 'package:cuotiva/features/settlements/domain/settlement_summary.dart';
+import 'package:cuotiva/features/settlements/presentation/providers/settlements_providers.dart';
 import 'package:cuotiva/features/spaces/presentation/providers/spaces_providers.dart';
 import 'package:cuotiva/features/receivables/presentation/providers/receivables_providers.dart';
 import 'package:cuotiva/features/receivables/presentation/screens/assign_receivables_screen.dart';
@@ -193,6 +195,14 @@ void main() {
     await tester.pumpWidget(
       _app(const CollectionDetailScreen(collectionId: 'k1'), [
         collectionByIdProvider('k1').overrideWith((_) async => collection),
+        settlementSummaryProvider('k1').overrideWith(
+          (_) => Stream.value(
+            const SettlementSummary(
+              collectedMinor: 60000,
+              deliveredMinor: 50000,
+            ),
+          ),
+        ),
         receivablesByCollectionProvider('k1').overrideWith(
           (_) => Stream.value([rec('r1', 'c1', 15000), rec('r2', 'c2', 15000)]),
         ),
@@ -231,6 +241,9 @@ void main() {
     expect(find.text('Ana'), findsOneWidget);
     expect(find.text('Beto'), findsOneWidget);
     expect(find.textContaining('2 participante'), findsOneWidget);
+    // Cobro de terceros: bloque recaudado / entregado / por entregar.
+    expect(find.text('Por entregar'), findsOneWidget);
+    expect(find.text('S/ 100.00'), findsOneWidget);
   });
 
   testWidgets('asignar: valida importe y selección', (tester) async {

@@ -11,6 +11,7 @@ import '../../../contacts/presentation/providers/contacts_providers.dart';
 import '../../../receivables/domain/balance_calculator.dart';
 import '../../../receivables/presentation/providers/receivables_providers.dart';
 import '../../../receivables/presentation/widgets/status_chip.dart';
+import '../../../settlements/presentation/widgets/settlement_summary_card.dart';
 import '../../domain/collection_labels.dart';
 import '../providers/collections_providers.dart';
 
@@ -67,6 +68,11 @@ class CollectionDetailScreen extends ConsumerWidget {
           appBar: AppBar(
             title: Text(c.title),
             actions: [
+              IconButton(
+                tooltip: 'Reporte PDF',
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                onPressed: () => context.push('/reportes/cobro/$collectionId'),
+              ),
               IconButton(
                 tooltip: 'Editar',
                 icon: const Icon(Icons.edit_outlined),
@@ -146,6 +152,8 @@ class CollectionDetailScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  if (c.fundsOwnership == 'third_party')
+                    SettlementSummaryCard(collectionId: collectionId),
                   const SizedBox(height: 8),
                   if (list.isEmpty)
                     const Padding(

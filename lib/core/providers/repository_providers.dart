@@ -8,6 +8,8 @@ import '../../features/payments/data/attachments_repository.dart';
 import '../../features/payments/data/payments_repository.dart';
 import '../../features/receivables/data/balances_repository.dart';
 import '../../features/receivables/data/receivables_repository.dart';
+import '../../features/reports/data/reports_repository.dart';
+import '../../features/settlements/data/settlements_repository.dart';
 import '../../features/spaces/data/spaces_repository.dart';
 import '../database/audit_service.dart';
 import 'core_providers.dart';
@@ -89,6 +91,22 @@ final receivablesRepositoryProvider = Provider<ReceivablesRepository>(
 
 final balancesRepositoryProvider = Provider<BalancesRepository>(
   (ref) => BalancesRepository(
+    ref.watch(appDatabaseProvider),
+    ref.watch(clockProvider),
+  ),
+);
+
+final settlementsRepositoryProvider = Provider<SettlementsRepository>(
+  (ref) => SettlementsRepository(
+    ref.watch(appDatabaseProvider),
+    ref.watch(auditServiceProvider),
+    ref.watch(uuidProvider),
+    ref.watch(clockProvider),
+  ),
+);
+
+final reportsRepositoryProvider = Provider<ReportsRepository>(
+  (ref) => ReportsRepository(
     ref.watch(appDatabaseProvider),
     ref.watch(clockProvider),
   ),

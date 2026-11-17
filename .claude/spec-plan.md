@@ -11,10 +11,10 @@
 - **Timeline estimado**: ~5 semanas (2-5 días por fase)
 
 ## Estado Actual
-- **Fase activa**: Fase 3 — Documentos y rendiciones
-- **Progreso**: 3 de 6 fases completadas
+- **Fase activa**: Fase 3 — Documentos y rendiciones (casi completa)
+- **Progreso**: 3 de 6 fases completadas (Fase 3 en cierre)
 - **Bloqueadores**: ninguno
-- **Próximo paso concreto**: Fase 3 — esquema v3 con `settlements` + `SettlementsRepository` (por entregar = recaudado − entregas confirmadas, sin alterar deudas) con tests primero; luego PDF
+- **Próximo paso concreto**: cerrar Fase 3 (adjuntos en PDF redimensionados + prueba de compartir en dispositivo) y empezar Fase 4 con el spike SQLCipher/Drift
 
 ## Fase 0: Base del proyecto — COMPLETADA
 
@@ -159,7 +159,7 @@
 
 ---
 
-## Fase 3: Documentos y rendiciones — PENDIENTE (siguiente)
+## Fase 3: Documentos y rendiciones — CASI COMPLETA (falta: adjuntos en PDF, prueba en dispositivo)
 
 **Duración estimada**: 4 días
 **Objetivo**: PDFs de estado de cuenta y de campaña, compartir por sistema, fondos de terceros y rendiciones.
@@ -171,34 +171,35 @@
 ### Entregables (Definición de Done)
 
 #### Datos / dominio
-- [ ] Tabla `settlements`; caso de uso registrar/anular rendición (auditado)
-- [ ] `por_entregar = recaudado - entregas_confirmadas`; bloquear entregas > recaudado
-- [ ] Rendición no altera deudas de participantes
+- [x] Tabla `settlements`; caso de uso registrar/anular rendición (auditado)
+- [x] `por_entregar = recaudado - entregas_confirmadas`; bloquear entregas > recaudado
+- [x] Rendición no altera deudas de participantes
 
 #### PDF / compartir
-- [ ] `core/pdf`: estado de cuenta individual (cabecera, movimientos confirmados, saldo, sección separada de pendientes, nota no tributaria, A4 con paginación)
-- [ ] Opciones: incluir/excluir teléfono, adjuntos, notas internas, detalle de cuotas
-- [ ] Reporte de campaña (comprometido/recaudado/pendiente/vencido; recaudado/entregado/por entregar para terceros)
-- [ ] Compartir con `share_plus` (hoja nativa/WhatsApp) + advertencia de datos personales
+- [x] `core/pdf`: estado de cuenta individual (cabecera, movimientos confirmados, saldo, sección separada de pendientes, nota no tributaria, A4 con paginación)
+- [~] Opciones: teléfono, notas internas, cuotas y pendientes listas; **adjuntos (imágenes) en el PDF pendiente**
+- [x] Reporte de campaña (comprometido/recaudado/pendiente/vencido; recaudado/entregado/por entregar para terceros)
+- [x] Compartir con `share_plus` (hoja nativa/WhatsApp) + advertencia de datos personales
 
 #### Frontend
-- [ ] Pantalla Rendiciones y bloque recaudado/entregado/por entregar en detalle de cobro
-- [ ] Pantalla Reportes con filtros (rango, espacio, campaña, persona, estado) y vista previa PDF
+- [x] Pantalla Rendiciones y bloque recaudado/entregado/por entregar en detalle de cobro
+- [x] Pantalla Reportes con filtros (rango de vencimiento, espacio, cobro, persona, estado) y vista previa PDF
 
 #### Tests
-- [ ] Unit: rendición no altera deuda; control de exceso
-- [ ] Integración: flujo 6-7 y 9 de §12
-- [ ] Golden/estructura de PDF (saldo cero con tres movimientos)
+- [x] Unit: rendición no altera deuda; control de exceso
+- [x] Integración: flujo 6-7 y 9 de §12
+- [x] Golden/estructura de PDF (saldo cero con tres movimientos)
 
 #### Documentación
-- [ ] Guía de reportes y campos del PDF
+- [x] Guía de reportes y campos del PDF
 
 ### Posibles obstáculos
 - Tablas PDF largas y fuentes con tildes/«S/» → embeber fuente (Poppins/Noto) en `pdf`.
 - Tamaño del PDF con imágenes adjuntas → redimensionar.
 
 ### Notas de avance
--
+- 2026-11-17: esquema v3 + `SettlementsRepository` (6 tests), UI Rendiciones, bloque en detalle de cobro; anular pago bloqueado si deja lo entregado sin respaldo.
+- 2026-11-17: `core/pdf` (estado de cuenta, reporte de cobro; Helvetica Latin-1 con `pdfSafe`), `ReportsRepository`, vista previa + compartir con advertencia, pantalla Reportes (+5 tests PDF). 138 tests, analyze limpio. Flujo 7 (hoja nativa) requiere prueba manual en dispositivo.
 
 ---
 

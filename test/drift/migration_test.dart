@@ -16,6 +16,15 @@ void main() {
     await verifier.migrateAndValidate(db, 2);
   });
 
+  test('v1 → v3 y v2 → v3: el esquema coincide con el esperado', () async {
+    for (final from in [1, 2]) {
+      final connection = await verifier.startAt(from);
+      final db = AppDatabase(connection);
+      await verifier.migrateAndValidate(db, 3);
+      await db.close();
+    }
+  });
+
   test('v1 → v2 conserva los datos existentes', () async {
     final schema = await verifier.schemaAt(1);
     final raw = schema.rawDatabase;
@@ -37,7 +46,7 @@ void main() {
 
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 2);
+    await verifier.migrateAndValidate(db, 3);
 
     final receivables = await db.select(db.receivables).get();
     expect(receivables.single.principalMinor, 12000);

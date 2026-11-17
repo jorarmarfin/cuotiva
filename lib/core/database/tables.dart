@@ -140,3 +140,24 @@ class Attachments extends Table with BaseTable {
   TextColumn get checksum => text()();
   BoolColumn get encrypted => boolean().withDefault(const Constant(false))();
 }
+
+/// Entregas del dinero recaudado a su destinatario (fondos de terceros).
+/// No alteran las deudas de los participantes (CUOTIVA_SPEC §4.3).
+class Settlements extends Table with BaseTable {
+  TextColumn get collectionId => text().references(Collections, #id)();
+  IntColumn get amountMinor => integer()();
+  TextColumn get currency => text().withDefault(const Constant('PEN'))();
+  DateTimeColumn get occurredAt => dateTime()();
+  // confirmed | voided
+  TextColumn get status => text().withDefault(const Constant('confirmed'))();
+  TextColumn get recipientName => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  DateTimeColumn get voidedAt => dateTime().nullable()();
+  TextColumn get voidReason => text().nullable()();
+
+  @override
+  List<String> get customConstraints => [
+    'CHECK (amount_minor > 0)',
+    "CHECK (status IN ('confirmed','voided'))",
+  ];
+}

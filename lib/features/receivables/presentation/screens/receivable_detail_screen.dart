@@ -47,7 +47,18 @@ class ReceivableDetailScreen extends ConsumerWidget {
             b.status != ReceivableStatus.paid &&
             b.status != ReceivableStatus.cancelled;
         return Scaffold(
-          appBar: AppBar(title: Text(name ?? 'Obligación')),
+          appBar: AppBar(
+            title: Text(name ?? 'Obligación'),
+            actions: [
+              IconButton(
+                tooltip: 'Estado de cuenta PDF',
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                onPressed: () => context.push(
+                  '/obligaciones/$receivableId/estado-de-cuenta',
+                ),
+              ),
+            ],
+          ),
           floatingActionButton: canPay
               ? FloatingActionButton.extended(
                   onPressed: () =>

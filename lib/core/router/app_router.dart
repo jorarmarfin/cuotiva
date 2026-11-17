@@ -12,13 +12,16 @@ import '../../features/contacts/presentation/screens/contact_detail_screen.dart'
 import '../../features/contacts/presentation/screens/contact_form_screen.dart';
 import '../../features/contacts/presentation/screens/contacts_screen.dart';
 import '../../features/dashboard/presentation/screens/home_screen.dart';
+import '../../features/reports/presentation/screens/campaign_preview_screen.dart';
+import '../../features/reports/presentation/screens/reports_screen.dart';
+import '../../features/reports/presentation/screens/statement_preview_screen.dart';
+import '../../features/settlements/presentation/screens/settlements_screen.dart';
 import '../../features/settings/presentation/screens/credits_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/spaces/presentation/screens/space_detail_screen.dart';
 import '../../features/spaces/presentation/screens/space_form_screen.dart';
 import '../../features/spaces/presentation/screens/spaces_screen.dart';
 import '../widgets/main_shell.dart';
-import '../widgets/placeholder_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -49,7 +52,7 @@ final appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/reportes',
-              builder: (_, _) => const PlaceholderScreen('Reportes'),
+              builder: (_, _) => const ReportsScreen(),
             ),
           ],
         ),
@@ -102,9 +105,24 @@ final appRouter = GoRouter(
           AssignReceivablesScreen(collectionId: s.pathParameters['id']!),
     ),
     GoRoute(
+      path: '/cobros/:id/rendiciones',
+      builder: (_, s) =>
+          SettlementsScreen(collectionId: s.pathParameters['id']!),
+    ),
+    GoRoute(
       path: '/obligaciones/:id',
       builder: (_, s) =>
           ReceivableDetailScreen(receivableId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/obligaciones/:id/estado-de-cuenta',
+      builder: (_, s) =>
+          StatementPreviewScreen(receivableId: s.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/reportes/cobro/:id',
+      builder: (_, s) =>
+          CampaignPreviewScreen(collectionId: s.pathParameters['id']!),
     ),
     GoRoute(
       path: '/obligaciones/:id/abono',

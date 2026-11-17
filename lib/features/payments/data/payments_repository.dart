@@ -226,6 +226,7 @@ class PaymentsRepository {
         'Solo se anula un pago confirmado (estado: ${paymentStatusLabel(p.status)})',
       );
     }
+    await _ensureSettlementsCovered(p);
     final now = _clock();
     await (_db.update(
       _db.payments,
@@ -246,6 +247,47 @@ class PaymentsRepository {
     );
     await _allocations.reallocate(p.receivableId);
   });
+
+  /// Anular un pago no puede dejar lo recaudado por debajo de lo ya entregado
+  /// al tercero (primero hay que anular la entrega).
+  Future<void> _ensureSettlementsCovered(Payment p) async {
+    final r = await (_db.select(
+      _db.receivables,
+    )..where((x) => x.id.equals(p.receivableId))).getSingle();
+    final paid = _db.payments.amountMinor.sum();
+    final collected =
+        (await (_db.selectOnly(_db.payments).join([
+                    innerJoin(
+                      _db.receivables,
+                      _db.receivables.id.equalsExp(_db.payments.receivableId),
+                    ),
+                  ])
+                  ..addColumns([paid])
+                  ..where(
+                    _db.receivables.collectionId.equals(r.collectionId) &
+                        _db.payments.status.equals('confirmed'),
+                  ))
+                .getSingle())
+            .read(paid) ??
+        0;
+    final deliv = _db.settlements.amountMinor.sum();
+    final delivered =
+        (await (_db.selectOnly(_db.settlements)
+                  ..addColumns([deliv])
+                  ..where(
+                    _db.settlements.collectionId.equals(r.collectionId) &
+                        _db.settlements.status.equals('confirmed'),
+                  ))
+                .getSingle())
+            .read(deliv) ??
+        0;
+    if (collected - p.amountMinor < delivered) {
+      throw PaymentException(
+        'No se puede anular: ya se entregó dinero recaudado a un tercero. '
+        'Anula primero la entrega correspondiente.',
+      );
+    }
+  }
 
   Future<Payment> _require(String id) async {
     final p = await find(id);

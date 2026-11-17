@@ -20,6 +20,7 @@ part 'app_database.g.dart';
     Payments,
     PaymentAllocations,
     Attachments,
+    Settlements,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -27,7 +28,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'cuotiva'));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -35,6 +36,7 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
       await _createIndexes();
       await _createPaymentIndexes();
+      await _createSettlementIndexes();
     },
     onUpgrade: (m, from, to) async {
       if (from < 2) {
@@ -43,10 +45,19 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(attachments);
         await _createPaymentIndexes();
       }
+      if (from < 3) {
+        await m.createTable(settlements);
+        await _createSettlementIndexes();
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },
+  );
+
+  /// v3: rendiciones.
+  Future<void> _createSettlementIndexes() => customStatement(
+    'CREATE INDEX idx_settlements_collection ON settlements(collection_id)',
   );
 
   /// v2: pagos, asignaciones y adjuntos.

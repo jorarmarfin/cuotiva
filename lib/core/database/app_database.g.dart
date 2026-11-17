@@ -5396,6 +5396,730 @@ class AttachmentsCompanion extends UpdateCompanion<Attachment> {
   }
 }
 
+class $SettlementsTable extends Settlements
+    with TableInfo<$SettlementsTable, Settlement> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SettlementsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _collectionIdMeta = const VerificationMeta(
+    'collectionId',
+  );
+  @override
+  late final GeneratedColumn<String> collectionId = GeneratedColumn<String>(
+    'collection_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES collections (id)',
+    ),
+  );
+  static const VerificationMeta _amountMinorMeta = const VerificationMeta(
+    'amountMinor',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinor = GeneratedColumn<int>(
+    'amount_minor',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currencyMeta = const VerificationMeta(
+    'currency',
+  );
+  @override
+  late final GeneratedColumn<String> currency = GeneratedColumn<String>(
+    'currency',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PEN'),
+  );
+  static const VerificationMeta _occurredAtMeta = const VerificationMeta(
+    'occurredAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> occurredAt = GeneratedColumn<DateTime>(
+    'occurred_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('confirmed'),
+  );
+  static const VerificationMeta _recipientNameMeta = const VerificationMeta(
+    'recipientName',
+  );
+  @override
+  late final GeneratedColumn<String> recipientName = GeneratedColumn<String>(
+    'recipient_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _voidedAtMeta = const VerificationMeta(
+    'voidedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> voidedAt = GeneratedColumn<DateTime>(
+    'voided_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _voidReasonMeta = const VerificationMeta(
+    'voidReason',
+  );
+  @override
+  late final GeneratedColumn<String> voidReason = GeneratedColumn<String>(
+    'void_reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    createdAt,
+    updatedAt,
+    collectionId,
+    amountMinor,
+    currency,
+    occurredAt,
+    status,
+    recipientName,
+    notes,
+    voidedAt,
+    voidReason,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'settlements';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Settlement> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('collection_id')) {
+      context.handle(
+        _collectionIdMeta,
+        collectionId.isAcceptableOrUnknown(
+          data['collection_id']!,
+          _collectionIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_collectionIdMeta);
+    }
+    if (data.containsKey('amount_minor')) {
+      context.handle(
+        _amountMinorMeta,
+        amountMinor.isAcceptableOrUnknown(
+          data['amount_minor']!,
+          _amountMinorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorMeta);
+    }
+    if (data.containsKey('currency')) {
+      context.handle(
+        _currencyMeta,
+        currency.isAcceptableOrUnknown(data['currency']!, _currencyMeta),
+      );
+    }
+    if (data.containsKey('occurred_at')) {
+      context.handle(
+        _occurredAtMeta,
+        occurredAt.isAcceptableOrUnknown(data['occurred_at']!, _occurredAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_occurredAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('recipient_name')) {
+      context.handle(
+        _recipientNameMeta,
+        recipientName.isAcceptableOrUnknown(
+          data['recipient_name']!,
+          _recipientNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('voided_at')) {
+      context.handle(
+        _voidedAtMeta,
+        voidedAt.isAcceptableOrUnknown(data['voided_at']!, _voidedAtMeta),
+      );
+    }
+    if (data.containsKey('void_reason')) {
+      context.handle(
+        _voidReasonMeta,
+        voidReason.isAcceptableOrUnknown(data['void_reason']!, _voidReasonMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Settlement map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Settlement(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      collectionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}collection_id'],
+      )!,
+      amountMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor'],
+      )!,
+      currency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency'],
+      )!,
+      occurredAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}occurred_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      recipientName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recipient_name'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      voidedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}voided_at'],
+      ),
+      voidReason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}void_reason'],
+      ),
+    );
+  }
+
+  @override
+  $SettlementsTable createAlias(String alias) {
+    return $SettlementsTable(attachedDatabase, alias);
+  }
+}
+
+class Settlement extends DataClass implements Insertable<Settlement> {
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String collectionId;
+  final int amountMinor;
+  final String currency;
+  final DateTime occurredAt;
+  final String status;
+  final String? recipientName;
+  final String? notes;
+  final DateTime? voidedAt;
+  final String? voidReason;
+  const Settlement({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.collectionId,
+    required this.amountMinor,
+    required this.currency,
+    required this.occurredAt,
+    required this.status,
+    this.recipientName,
+    this.notes,
+    this.voidedAt,
+    this.voidReason,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['collection_id'] = Variable<String>(collectionId);
+    map['amount_minor'] = Variable<int>(amountMinor);
+    map['currency'] = Variable<String>(currency);
+    map['occurred_at'] = Variable<DateTime>(occurredAt);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || recipientName != null) {
+      map['recipient_name'] = Variable<String>(recipientName);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || voidedAt != null) {
+      map['voided_at'] = Variable<DateTime>(voidedAt);
+    }
+    if (!nullToAbsent || voidReason != null) {
+      map['void_reason'] = Variable<String>(voidReason);
+    }
+    return map;
+  }
+
+  SettlementsCompanion toCompanion(bool nullToAbsent) {
+    return SettlementsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      collectionId: Value(collectionId),
+      amountMinor: Value(amountMinor),
+      currency: Value(currency),
+      occurredAt: Value(occurredAt),
+      status: Value(status),
+      recipientName: recipientName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recipientName),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      voidedAt: voidedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(voidedAt),
+      voidReason: voidReason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(voidReason),
+    );
+  }
+
+  factory Settlement.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Settlement(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      collectionId: serializer.fromJson<String>(json['collectionId']),
+      amountMinor: serializer.fromJson<int>(json['amountMinor']),
+      currency: serializer.fromJson<String>(json['currency']),
+      occurredAt: serializer.fromJson<DateTime>(json['occurredAt']),
+      status: serializer.fromJson<String>(json['status']),
+      recipientName: serializer.fromJson<String?>(json['recipientName']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      voidedAt: serializer.fromJson<DateTime?>(json['voidedAt']),
+      voidReason: serializer.fromJson<String?>(json['voidReason']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'collectionId': serializer.toJson<String>(collectionId),
+      'amountMinor': serializer.toJson<int>(amountMinor),
+      'currency': serializer.toJson<String>(currency),
+      'occurredAt': serializer.toJson<DateTime>(occurredAt),
+      'status': serializer.toJson<String>(status),
+      'recipientName': serializer.toJson<String?>(recipientName),
+      'notes': serializer.toJson<String?>(notes),
+      'voidedAt': serializer.toJson<DateTime?>(voidedAt),
+      'voidReason': serializer.toJson<String?>(voidReason),
+    };
+  }
+
+  Settlement copyWith({
+    String? id,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? collectionId,
+    int? amountMinor,
+    String? currency,
+    DateTime? occurredAt,
+    String? status,
+    Value<String?> recipientName = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    Value<DateTime?> voidedAt = const Value.absent(),
+    Value<String?> voidReason = const Value.absent(),
+  }) => Settlement(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    collectionId: collectionId ?? this.collectionId,
+    amountMinor: amountMinor ?? this.amountMinor,
+    currency: currency ?? this.currency,
+    occurredAt: occurredAt ?? this.occurredAt,
+    status: status ?? this.status,
+    recipientName: recipientName.present
+        ? recipientName.value
+        : this.recipientName,
+    notes: notes.present ? notes.value : this.notes,
+    voidedAt: voidedAt.present ? voidedAt.value : this.voidedAt,
+    voidReason: voidReason.present ? voidReason.value : this.voidReason,
+  );
+  Settlement copyWithCompanion(SettlementsCompanion data) {
+    return Settlement(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      collectionId: data.collectionId.present
+          ? data.collectionId.value
+          : this.collectionId,
+      amountMinor: data.amountMinor.present
+          ? data.amountMinor.value
+          : this.amountMinor,
+      currency: data.currency.present ? data.currency.value : this.currency,
+      occurredAt: data.occurredAt.present
+          ? data.occurredAt.value
+          : this.occurredAt,
+      status: data.status.present ? data.status.value : this.status,
+      recipientName: data.recipientName.present
+          ? data.recipientName.value
+          : this.recipientName,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      voidedAt: data.voidedAt.present ? data.voidedAt.value : this.voidedAt,
+      voidReason: data.voidReason.present
+          ? data.voidReason.value
+          : this.voidReason,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Settlement(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('collectionId: $collectionId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency, ')
+          ..write('occurredAt: $occurredAt, ')
+          ..write('status: $status, ')
+          ..write('recipientName: $recipientName, ')
+          ..write('notes: $notes, ')
+          ..write('voidedAt: $voidedAt, ')
+          ..write('voidReason: $voidReason')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    createdAt,
+    updatedAt,
+    collectionId,
+    amountMinor,
+    currency,
+    occurredAt,
+    status,
+    recipientName,
+    notes,
+    voidedAt,
+    voidReason,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Settlement &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.collectionId == this.collectionId &&
+          other.amountMinor == this.amountMinor &&
+          other.currency == this.currency &&
+          other.occurredAt == this.occurredAt &&
+          other.status == this.status &&
+          other.recipientName == this.recipientName &&
+          other.notes == this.notes &&
+          other.voidedAt == this.voidedAt &&
+          other.voidReason == this.voidReason);
+}
+
+class SettlementsCompanion extends UpdateCompanion<Settlement> {
+  final Value<String> id;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<String> collectionId;
+  final Value<int> amountMinor;
+  final Value<String> currency;
+  final Value<DateTime> occurredAt;
+  final Value<String> status;
+  final Value<String?> recipientName;
+  final Value<String?> notes;
+  final Value<DateTime?> voidedAt;
+  final Value<String?> voidReason;
+  final Value<int> rowid;
+  const SettlementsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.collectionId = const Value.absent(),
+    this.amountMinor = const Value.absent(),
+    this.currency = const Value.absent(),
+    this.occurredAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.recipientName = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.voidedAt = const Value.absent(),
+    this.voidReason = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SettlementsCompanion.insert({
+    required String id,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    required String collectionId,
+    required int amountMinor,
+    this.currency = const Value.absent(),
+    required DateTime occurredAt,
+    this.status = const Value.absent(),
+    this.recipientName = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.voidedAt = const Value.absent(),
+    this.voidReason = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt),
+       collectionId = Value(collectionId),
+       amountMinor = Value(amountMinor),
+       occurredAt = Value(occurredAt);
+  static Insertable<Settlement> custom({
+    Expression<String>? id,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? collectionId,
+    Expression<int>? amountMinor,
+    Expression<String>? currency,
+    Expression<DateTime>? occurredAt,
+    Expression<String>? status,
+    Expression<String>? recipientName,
+    Expression<String>? notes,
+    Expression<DateTime>? voidedAt,
+    Expression<String>? voidReason,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (collectionId != null) 'collection_id': collectionId,
+      if (amountMinor != null) 'amount_minor': amountMinor,
+      if (currency != null) 'currency': currency,
+      if (occurredAt != null) 'occurred_at': occurredAt,
+      if (status != null) 'status': status,
+      if (recipientName != null) 'recipient_name': recipientName,
+      if (notes != null) 'notes': notes,
+      if (voidedAt != null) 'voided_at': voidedAt,
+      if (voidReason != null) 'void_reason': voidReason,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SettlementsCompanion copyWith({
+    Value<String>? id,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<String>? collectionId,
+    Value<int>? amountMinor,
+    Value<String>? currency,
+    Value<DateTime>? occurredAt,
+    Value<String>? status,
+    Value<String?>? recipientName,
+    Value<String?>? notes,
+    Value<DateTime?>? voidedAt,
+    Value<String?>? voidReason,
+    Value<int>? rowid,
+  }) {
+    return SettlementsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      collectionId: collectionId ?? this.collectionId,
+      amountMinor: amountMinor ?? this.amountMinor,
+      currency: currency ?? this.currency,
+      occurredAt: occurredAt ?? this.occurredAt,
+      status: status ?? this.status,
+      recipientName: recipientName ?? this.recipientName,
+      notes: notes ?? this.notes,
+      voidedAt: voidedAt ?? this.voidedAt,
+      voidReason: voidReason ?? this.voidReason,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (collectionId.present) {
+      map['collection_id'] = Variable<String>(collectionId.value);
+    }
+    if (amountMinor.present) {
+      map['amount_minor'] = Variable<int>(amountMinor.value);
+    }
+    if (currency.present) {
+      map['currency'] = Variable<String>(currency.value);
+    }
+    if (occurredAt.present) {
+      map['occurred_at'] = Variable<DateTime>(occurredAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (recipientName.present) {
+      map['recipient_name'] = Variable<String>(recipientName.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (voidedAt.present) {
+      map['voided_at'] = Variable<DateTime>(voidedAt.value);
+    }
+    if (voidReason.present) {
+      map['void_reason'] = Variable<String>(voidReason.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SettlementsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('collectionId: $collectionId, ')
+          ..write('amountMinor: $amountMinor, ')
+          ..write('currency: $currency, ')
+          ..write('occurredAt: $occurredAt, ')
+          ..write('status: $status, ')
+          ..write('recipientName: $recipientName, ')
+          ..write('notes: $notes, ')
+          ..write('voidedAt: $voidedAt, ')
+          ..write('voidReason: $voidReason, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5410,6 +6134,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PaymentAllocationsTable paymentAllocations =
       $PaymentAllocationsTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
+  late final $SettlementsTable settlements = $SettlementsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5425,6 +6150,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     payments,
     paymentAllocations,
     attachments,
+    settlements,
   ];
 }
 
@@ -6234,6 +6960,24 @@ final class $$CollectionsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$SettlementsTable, List<Settlement>>
+  _settlementsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.settlements,
+    aliasName: 'collections__id__settlements__collection_id',
+  );
+
+  $$SettlementsTableProcessedTableManager get settlementsRefs {
+    final manager = $$SettlementsTableTableManager(
+      $_db,
+      $_db.settlements,
+    ).filter((f) => f.collectionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_settlementsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$CollectionsTableFilterComposer
@@ -6329,6 +7073,31 @@ class $$CollectionsTableFilterComposer
           }) => $$ReceivablesTableFilterComposer(
             $db: $db,
             $table: $db.receivables,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> settlementsRefs(
+    Expression<bool> Function($$SettlementsTableFilterComposer f) f,
+  ) {
+    final $$SettlementsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.settlements,
+      getReferencedColumn: (t) => t.collectionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SettlementsTableFilterComposer(
+            $db: $db,
+            $table: $db.settlements,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -6504,6 +7273,31 @@ class $$CollectionsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> settlementsRefs<T extends Object>(
+    Expression<T> Function($$SettlementsTableAnnotationComposer a) f,
+  ) {
+    final $$SettlementsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.settlements,
+      getReferencedColumn: (t) => t.collectionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SettlementsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.settlements,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$CollectionsTableTableManager
@@ -6519,7 +7313,11 @@ class $$CollectionsTableTableManager
           $$CollectionsTableUpdateCompanionBuilder,
           (Collection, $$CollectionsTableReferences),
           Collection,
-          PrefetchHooks Function({bool spaceId, bool receivablesRefs})
+          PrefetchHooks Function({
+            bool spaceId,
+            bool receivablesRefs,
+            bool settlementsRefs,
+          })
         > {
   $$CollectionsTableTableManager(_$AppDatabase db, $CollectionsTable table)
     : super(
@@ -6592,66 +7390,94 @@ class $$CollectionsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({spaceId = false, receivablesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (receivablesRefs) db.receivables],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (spaceId) {
-                      state = state.withJoin(
-                        currentTable: table,
-                        currentColumn: table.spaceId,
-                        referencedTable: $$CollectionsTableReferences
-                            ._spaceIdTable(db),
-                        referencedColumn: $$CollectionsTableReferences
-                            ._spaceIdTable(db)
-                            .id,
-                      ) as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                spaceId = false,
+                receivablesRefs = false,
+                settlementsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (receivablesRefs) db.receivables,
+                    if (settlementsRefs) db.settlements,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (spaceId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.spaceId,
+                            referencedTable: $$CollectionsTableReferences
+                                ._spaceIdTable(db),
+                            referencedColumn: $$CollectionsTableReferences
+                                ._spaceIdTable(db)
+                                .id,
+                          ) as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (receivablesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Collection,
+                          $CollectionsTable,
+                          Receivable,
+                          $ReceivablesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CollectionsTableReferences
+                              ._receivablesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CollectionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).receivablesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'collection_id',
+                          typedResults: items,
+                        ),
+                      if (settlementsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Collection,
+                          $CollectionsTable,
+                          Settlement,
+                          $SettlementsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CollectionsTableReferences
+                              ._settlementsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CollectionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).settlementsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'collection_id',
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (receivablesRefs)
-                    await $_getPrefetchedDataByColumns<
-                      Collection,
-                      $CollectionsTable,
-                      Receivable,
-                      $ReceivablesTable
-                    >(
-                      currentTable: table,
-                      referencedTable: $$CollectionsTableReferences
-                          ._receivablesRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$CollectionsTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).receivablesRefs,
-                      currentColumn: 'id',
-                      referencedColumn: 'collection_id',
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -6668,7 +7494,11 @@ typedef $$CollectionsTableProcessedTableManager =
       $$CollectionsTableUpdateCompanionBuilder,
       (Collection, $$CollectionsTableReferences),
       Collection,
-      PrefetchHooks Function({bool spaceId, bool receivablesRefs})
+      PrefetchHooks Function({
+        bool spaceId,
+        bool receivablesRefs,
+        bool settlementsRefs,
+      })
     >;
 typedef $$ReceivablesTableCreateCompanionBuilder =
     ReceivablesCompanion Function({
@@ -9771,6 +10601,462 @@ typedef $$AttachmentsTableProcessedTableManager =
       Attachment,
       PrefetchHooks Function({bool paymentId})
     >;
+typedef $$SettlementsTableCreateCompanionBuilder =
+    SettlementsCompanion Function({
+      required String id,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      required String collectionId,
+      required int amountMinor,
+      Value<String> currency,
+      required DateTime occurredAt,
+      Value<String> status,
+      Value<String?> recipientName,
+      Value<String?> notes,
+      Value<DateTime?> voidedAt,
+      Value<String?> voidReason,
+      Value<int> rowid,
+    });
+typedef $$SettlementsTableUpdateCompanionBuilder =
+    SettlementsCompanion Function({
+      Value<String> id,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<String> collectionId,
+      Value<int> amountMinor,
+      Value<String> currency,
+      Value<DateTime> occurredAt,
+      Value<String> status,
+      Value<String?> recipientName,
+      Value<String?> notes,
+      Value<DateTime?> voidedAt,
+      Value<String?> voidReason,
+      Value<int> rowid,
+    });
+
+final class $$SettlementsTableReferences
+    extends BaseReferences<_$AppDatabase, $SettlementsTable, Settlement> {
+  $$SettlementsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $CollectionsTable _collectionIdTable(_$AppDatabase db) =>
+      db.collections.createAlias('settlements__collection_id__collections__id');
+
+  $$CollectionsTableProcessedTableManager get collectionId {
+    final $_column = $_itemColumn<String>('collection_id')!;
+
+    final manager = $$CollectionsTableTableManager(
+      $_db,
+      $_db.collections,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_collectionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SettlementsTableFilterComposer
+    extends Composer<_$AppDatabase, $SettlementsTable> {
+  $$SettlementsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get occurredAt => $composableBuilder(
+    column: $table.occurredAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recipientName => $composableBuilder(
+    column: $table.recipientName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get voidedAt => $composableBuilder(
+    column: $table.voidedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get voidReason => $composableBuilder(
+    column: $table.voidReason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$CollectionsTableFilterComposer get collectionId {
+    final $$CollectionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.collectionId,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableFilterComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SettlementsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SettlementsTable> {
+  $$SettlementsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currency => $composableBuilder(
+    column: $table.currency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get occurredAt => $composableBuilder(
+    column: $table.occurredAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recipientName => $composableBuilder(
+    column: $table.recipientName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get voidedAt => $composableBuilder(
+    column: $table.voidedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get voidReason => $composableBuilder(
+    column: $table.voidReason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$CollectionsTableOrderingComposer get collectionId {
+    final $$CollectionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.collectionId,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SettlementsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SettlementsTable> {
+  $$SettlementsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinor => $composableBuilder(
+    column: $table.amountMinor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currency =>
+      $composableBuilder(column: $table.currency, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get occurredAt => $composableBuilder(
+    column: $table.occurredAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get recipientName => $composableBuilder(
+    column: $table.recipientName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get voidedAt =>
+      $composableBuilder(column: $table.voidedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get voidReason => $composableBuilder(
+    column: $table.voidReason,
+    builder: (column) => column,
+  );
+
+  $$CollectionsTableAnnotationComposer get collectionId {
+    final $$CollectionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.collectionId,
+      referencedTable: $db.collections,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CollectionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.collections,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SettlementsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SettlementsTable,
+          Settlement,
+          $$SettlementsTableFilterComposer,
+          $$SettlementsTableOrderingComposer,
+          $$SettlementsTableAnnotationComposer,
+          $$SettlementsTableCreateCompanionBuilder,
+          $$SettlementsTableUpdateCompanionBuilder,
+          (Settlement, $$SettlementsTableReferences),
+          Settlement,
+          PrefetchHooks Function({bool collectionId})
+        > {
+  $$SettlementsTableTableManager(_$AppDatabase db, $SettlementsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SettlementsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SettlementsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SettlementsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> collectionId = const Value.absent(),
+                Value<int> amountMinor = const Value.absent(),
+                Value<String> currency = const Value.absent(),
+                Value<DateTime> occurredAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> recipientName = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime?> voidedAt = const Value.absent(),
+                Value<String?> voidReason = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SettlementsCompanion(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                collectionId: collectionId,
+                amountMinor: amountMinor,
+                currency: currency,
+                occurredAt: occurredAt,
+                status: status,
+                recipientName: recipientName,
+                notes: notes,
+                voidedAt: voidedAt,
+                voidReason: voidReason,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                required String collectionId,
+                required int amountMinor,
+                Value<String> currency = const Value.absent(),
+                required DateTime occurredAt,
+                Value<String> status = const Value.absent(),
+                Value<String?> recipientName = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<DateTime?> voidedAt = const Value.absent(),
+                Value<String?> voidReason = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SettlementsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                collectionId: collectionId,
+                amountMinor: amountMinor,
+                currency: currency,
+                occurredAt: occurredAt,
+                status: status,
+                recipientName: recipientName,
+                notes: notes,
+                voidedAt: voidedAt,
+                voidReason: voidReason,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SettlementsTable, Settlement>(table),
+                  $$SettlementsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({collectionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (collectionId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.collectionId,
+                        referencedTable: $$SettlementsTableReferences
+                            ._collectionIdTable(db),
+                        referencedColumn: $$SettlementsTableReferences
+                            ._collectionIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SettlementsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SettlementsTable,
+      Settlement,
+      $$SettlementsTableFilterComposer,
+      $$SettlementsTableOrderingComposer,
+      $$SettlementsTableAnnotationComposer,
+      $$SettlementsTableCreateCompanionBuilder,
+      $$SettlementsTableUpdateCompanionBuilder,
+      (Settlement, $$SettlementsTableReferences),
+      Settlement,
+      PrefetchHooks Function({bool collectionId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -9795,4 +11081,6 @@ class $AppDatabaseManager {
       $$PaymentAllocationsTableTableManager(_db, _db.paymentAllocations);
   $$AttachmentsTableTableManager get attachments =>
       $$AttachmentsTableTableManager(_db, _db.attachments);
+  $$SettlementsTableTableManager get settlements =>
+      $$SettlementsTableTableManager(_db, _db.settlements);
 }

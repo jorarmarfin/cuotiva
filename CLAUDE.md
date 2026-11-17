@@ -54,6 +54,7 @@ Reglas:
 ## Release
 
 - `applicationId`/`namespace`: com.luisitomayta.cuotiva
+- Firma: `android/key.properties` (gitignored) apunta a `/home/lmayta/cuotiva.jks`, alias `cuotiva`. Sin ese archivo el build release falla a proposito. Respaldar el .jks: perderlo impide actualizar la app en Play.
 - **Ofuscacion Dart obligatoria en release real**: usar
   `./scripts/build_release.sh` en vez de `flutter build` directo. Genera
   `symbols/<version>/` (gitignored) — respaldar esa carpeta fuera del repo,

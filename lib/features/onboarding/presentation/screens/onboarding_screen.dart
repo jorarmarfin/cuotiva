@@ -129,7 +129,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            LinearProgressIndicator(value: (_step + 1) / _steps),
             Expanded(
               child: PageView(
                 controller: _page,
@@ -215,7 +214,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 20),
                       TextField(
                         controller: _name,
                         textCapitalization: TextCapitalization.sentences,
@@ -229,34 +228,74 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-              child: Row(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+              child: Column(
                 children: [
-                  if (_step > 0 && _step < 3)
-                    TextButton(
-                      onPressed: _busy ? null : () => _go(_step - 1),
-                      child: const Text('Atrás'),
-                    ),
-                  const Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 0; i < _steps; i++)
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: i == _step ? 24 : 8,
+                          height: 8,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            color: i == _step
+                                ? scheme.primary
+                                : scheme.outlineVariant,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      if (_step > 0) ...[
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: _busy ? null : () => _go(_step - 1),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: scheme.surfaceContainerLowest,
+                              foregroundColor: scheme.primary,
+                              minimumSize: const Size.fromHeight(52),
+                              side: BorderSide(
+                                color: scheme.primary,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Text('Atrás'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        flex: _step > 0 ? 2 : 1,
+                        child: FilledButton(
+                          onPressed: _busy
+                              ? null
+                              : switch (_step) {
+                                  0 => () => _go(1),
+                                  1 => _savePin,
+                                  2 => () => _go(3),
+                                  _ => () => _finish(createSpace: true),
+                                },
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size.fromHeight(52),
+                          ),
+                          child: Text(_step == 3 ? 'Empezar' : 'Continuar'),
+                        ),
+                      ),
+                    ],
+                  ),
                   if (_step == 3)
                     TextButton(
                       onPressed: _busy
                           ? null
                           : () => _finish(createSpace: false),
-                      child: const Text('Omitir'),
+                      child: const Text('Omitir por ahora'),
                     ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: _busy
-                        ? null
-                        : switch (_step) {
-                            0 => () => _go(1),
-                            1 => _savePin,
-                            2 => () => _go(3),
-                            _ => () => _finish(createSpace: true),
-                          },
-                    child: Text(_step == 3 ? 'Empezar' : 'Continuar'),
-                  ),
                 ],
               ),
             ),

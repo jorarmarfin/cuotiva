@@ -44,6 +44,6 @@ void main() {
     await t.tap(find.text('Colegio'));
     await t.pump();
     expect(find.widgetWithText(TextField, 'Colegio'), findsOneWidget);
-    expect(find.text('Omitir'), findsOneWidget);
+    expect(find.text('Omitir por ahora'), findsOneWidget);
   });
 }

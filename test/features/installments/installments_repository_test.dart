@@ -6,6 +6,7 @@ import 'package:cuotiva/features/contacts/data/contacts_repository.dart';
 import 'package:cuotiva/features/installments/data/installments_repository.dart';
 import 'package:cuotiva/features/installments/domain/installment_planner.dart';
 import 'package:cuotiva/features/payments/data/payments_repository.dart';
+import 'package:cuotiva/features/payments/domain/payment_errors.dart';
 import 'package:cuotiva/features/receivables/data/receivables_repository.dart';
 import 'package:cuotiva/features/receivables/domain/receivable_errors.dart';
 import 'package:cuotiva/features/spaces/data/spaces_repository.dart';
@@ -69,10 +70,15 @@ void main() {
     firstDue: DateTime(2026, 12, 1),
   ); // 40 + 40 + 40
 
-  Future<void> pay(String amount, {bool confirm = true}) => payments.register(
+  Future<void> pay(
+    String amount, {
+    bool confirm = true,
+    String? installmentId,
+  }) => payments.register(
     receivableId: r.id,
     amount: Money.parse(amount),
     confirmNow: confirm,
+    installmentId: installmentId,
   );
 
   test('guarda el plan ordenado por fecha con sequence 1..n', () async {
@@ -103,6 +109,77 @@ void main() {
       InstallmentStatus.paid,
       InstallmentStatus.partial,
       InstallmentStatus.pending,
+    ]);
+  });
+
+  test('abono dirigido a una cuota la paga aunque haya anteriores', () async {
+    await installments.setPlan(r.id, three());
+    final c = await installments.list(r.id);
+    await pay('40', installmentId: c[2].id);
+    expect((await installments.plan(r.id)).map((v) => v.paidMinor), [
+      0,
+      0,
+      4000,
+    ]);
+  });
+
+  test(
+    'exceso sobre la cuota elegida pasa a la más antigua con saldo',
+    () async {
+      await installments.setPlan(r.id, three());
+      final c = await installments.list(r.id);
+      await pay('55', installmentId: c[1].id); // 40 a la 2 + 15 a la 1
+      expect((await installments.plan(r.id)).map((v) => v.paidMinor), [
+        1500,
+        4000,
+        0,
+      ]);
+    },
+  );
+
+  test('abono parcial dirigido y otro automático conviven', () async {
+    await installments.setPlan(r.id, three());
+    final c = await installments.list(r.id);
+    await pay('10', installmentId: c[1].id);
+    await pay('40');
+    expect((await installments.plan(r.id)).map((v) => v.paidMinor), [
+      4000,
+      1000,
+      0,
+    ]);
+  });
+
+  test('anular el abono dirigido libera la cuota', () async {
+    await installments.setPlan(r.id, three());
+    final c = await installments.list(r.id);
+    await pay('40', installmentId: c[2].id);
+    final p = (await db.select(db.payments).get()).single;
+    await payments.voidPayment(p.id, reason: 'error');
+    expect(
+      (await installments.plan(r.id)).every((v) => v.paidMinor == 0),
+      isTrue,
+    );
+  });
+
+  test('rechaza una cuota de otra obligación', () async {
+    await installments.setPlan(r.id, three());
+    await expectLater(
+      pay('10', installmentId: 'no-existe'),
+      throwsA(isA<PaymentException>()),
+    );
+  });
+
+  test('reemplazar el plan limpia el destino de los abonos', () async {
+    await installments.setPlan(r.id, three());
+    final c = await installments.list(r.id);
+    await pay('40', installmentId: c[2].id);
+    await installments.setPlan(r.id, three());
+    final p = (await db.select(db.payments).get()).single;
+    expect(p.installmentId, isNull);
+    expect((await installments.plan(r.id)).map((v) => v.paidMinor), [
+      4000,
+      0,
+      0,
     ]);
   });
 
@@ -241,9 +318,9 @@ void main() {
     () async {
       // Otro stream activo, con tablas distintas, registrado ANTES que el del plan.
       final other = db
-        .customSelect('SELECT 1', readsFrom: {db.receivables})
-        .watch()
-        .listen((_) {});
+          .customSelect('SELECT 1', readsFrom: {db.receivables})
+          .watch()
+          .listen((_) {});
       final emissions = <int>[];
       final sub = installments
           .watchPlan(r.id)

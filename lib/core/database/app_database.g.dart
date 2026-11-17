@@ -3740,6 +3740,17 @@ class $PaymentsTable extends Payments with TableInfo<$PaymentsTable, Payment> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _installmentIdMeta = const VerificationMeta(
+    'installmentId',
+  );
+  @override
+  late final GeneratedColumn<String> installmentId = GeneratedColumn<String>(
+    'installment_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3756,6 +3767,7 @@ class $PaymentsTable extends Payments with TableInfo<$PaymentsTable, Payment> {
     verifiedAt,
     voidedAt,
     voidReason,
+    installmentId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3868,6 +3880,15 @@ class $PaymentsTable extends Payments with TableInfo<$PaymentsTable, Payment> {
         voidReason.isAcceptableOrUnknown(data['void_reason']!, _voidReasonMeta),
       );
     }
+    if (data.containsKey('installment_id')) {
+      context.handle(
+        _installmentIdMeta,
+        installmentId.isAcceptableOrUnknown(
+          data['installment_id']!,
+          _installmentIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3933,6 +3954,10 @@ class $PaymentsTable extends Payments with TableInfo<$PaymentsTable, Payment> {
         DriftSqlType.string,
         data['${effectivePrefix}void_reason'],
       ),
+      installmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}installment_id'],
+      ),
     );
   }
 
@@ -3957,6 +3982,7 @@ class Payment extends DataClass implements Insertable<Payment> {
   final DateTime? verifiedAt;
   final DateTime? voidedAt;
   final String? voidReason;
+  final String? installmentId;
   const Payment({
     required this.id,
     required this.createdAt,
@@ -3972,6 +3998,7 @@ class Payment extends DataClass implements Insertable<Payment> {
     this.verifiedAt,
     this.voidedAt,
     this.voidReason,
+    this.installmentId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3999,6 +4026,9 @@ class Payment extends DataClass implements Insertable<Payment> {
     }
     if (!nullToAbsent || voidReason != null) {
       map['void_reason'] = Variable<String>(voidReason);
+    }
+    if (!nullToAbsent || installmentId != null) {
+      map['installment_id'] = Variable<String>(installmentId);
     }
     return map;
   }
@@ -4029,6 +4059,9 @@ class Payment extends DataClass implements Insertable<Payment> {
       voidReason: voidReason == null && nullToAbsent
           ? const Value.absent()
           : Value(voidReason),
+      installmentId: installmentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(installmentId),
     );
   }
 
@@ -4052,6 +4085,7 @@ class Payment extends DataClass implements Insertable<Payment> {
       verifiedAt: serializer.fromJson<DateTime?>(json['verifiedAt']),
       voidedAt: serializer.fromJson<DateTime?>(json['voidedAt']),
       voidReason: serializer.fromJson<String?>(json['voidReason']),
+      installmentId: serializer.fromJson<String?>(json['installmentId']),
     );
   }
   @override
@@ -4072,6 +4106,7 @@ class Payment extends DataClass implements Insertable<Payment> {
       'verifiedAt': serializer.toJson<DateTime?>(verifiedAt),
       'voidedAt': serializer.toJson<DateTime?>(voidedAt),
       'voidReason': serializer.toJson<String?>(voidReason),
+      'installmentId': serializer.toJson<String?>(installmentId),
     };
   }
 
@@ -4090,6 +4125,7 @@ class Payment extends DataClass implements Insertable<Payment> {
     Value<DateTime?> verifiedAt = const Value.absent(),
     Value<DateTime?> voidedAt = const Value.absent(),
     Value<String?> voidReason = const Value.absent(),
+    Value<String?> installmentId = const Value.absent(),
   }) => Payment(
     id: id ?? this.id,
     createdAt: createdAt ?? this.createdAt,
@@ -4105,6 +4141,9 @@ class Payment extends DataClass implements Insertable<Payment> {
     verifiedAt: verifiedAt.present ? verifiedAt.value : this.verifiedAt,
     voidedAt: voidedAt.present ? voidedAt.value : this.voidedAt,
     voidReason: voidReason.present ? voidReason.value : this.voidReason,
+    installmentId: installmentId.present
+        ? installmentId.value
+        : this.installmentId,
   );
   Payment copyWithCompanion(PaymentsCompanion data) {
     return Payment(
@@ -4132,6 +4171,9 @@ class Payment extends DataClass implements Insertable<Payment> {
       voidReason: data.voidReason.present
           ? data.voidReason.value
           : this.voidReason,
+      installmentId: data.installmentId.present
+          ? data.installmentId.value
+          : this.installmentId,
     );
   }
 
@@ -4151,7 +4193,8 @@ class Payment extends DataClass implements Insertable<Payment> {
           ..write('notes: $notes, ')
           ..write('verifiedAt: $verifiedAt, ')
           ..write('voidedAt: $voidedAt, ')
-          ..write('voidReason: $voidReason')
+          ..write('voidReason: $voidReason, ')
+          ..write('installmentId: $installmentId')
           ..write(')'))
         .toString();
   }
@@ -4172,6 +4215,7 @@ class Payment extends DataClass implements Insertable<Payment> {
     verifiedAt,
     voidedAt,
     voidReason,
+    installmentId,
   );
   @override
   bool operator ==(Object other) =>
@@ -4190,7 +4234,8 @@ class Payment extends DataClass implements Insertable<Payment> {
           other.notes == this.notes &&
           other.verifiedAt == this.verifiedAt &&
           other.voidedAt == this.voidedAt &&
-          other.voidReason == this.voidReason);
+          other.voidReason == this.voidReason &&
+          other.installmentId == this.installmentId);
 }
 
 class PaymentsCompanion extends UpdateCompanion<Payment> {
@@ -4208,6 +4253,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
   final Value<DateTime?> verifiedAt;
   final Value<DateTime?> voidedAt;
   final Value<String?> voidReason;
+  final Value<String?> installmentId;
   final Value<int> rowid;
   const PaymentsCompanion({
     this.id = const Value.absent(),
@@ -4224,6 +4270,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
     this.verifiedAt = const Value.absent(),
     this.voidedAt = const Value.absent(),
     this.voidReason = const Value.absent(),
+    this.installmentId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   PaymentsCompanion.insert({
@@ -4241,6 +4288,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
     this.verifiedAt = const Value.absent(),
     this.voidedAt = const Value.absent(),
     this.voidReason = const Value.absent(),
+    this.installmentId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        createdAt = Value(createdAt),
@@ -4263,6 +4311,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
     Expression<DateTime>? verifiedAt,
     Expression<DateTime>? voidedAt,
     Expression<String>? voidReason,
+    Expression<String>? installmentId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4280,6 +4329,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
       if (verifiedAt != null) 'verified_at': verifiedAt,
       if (voidedAt != null) 'voided_at': voidedAt,
       if (voidReason != null) 'void_reason': voidReason,
+      if (installmentId != null) 'installment_id': installmentId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4299,6 +4349,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
     Value<DateTime?>? verifiedAt,
     Value<DateTime?>? voidedAt,
     Value<String?>? voidReason,
+    Value<String?>? installmentId,
     Value<int>? rowid,
   }) {
     return PaymentsCompanion(
@@ -4316,6 +4367,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
       verifiedAt: verifiedAt ?? this.verifiedAt,
       voidedAt: voidedAt ?? this.voidedAt,
       voidReason: voidReason ?? this.voidReason,
+      installmentId: installmentId ?? this.installmentId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4365,6 +4417,9 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
     if (voidReason.present) {
       map['void_reason'] = Variable<String>(voidReason.value);
     }
+    if (installmentId.present) {
+      map['installment_id'] = Variable<String>(installmentId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4388,6 +4443,7 @@ class PaymentsCompanion extends UpdateCompanion<Payment> {
           ..write('verifiedAt: $verifiedAt, ')
           ..write('voidedAt: $voidedAt, ')
           ..write('voidReason: $voidReason, ')
+          ..write('installmentId: $installmentId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -9097,6 +9153,7 @@ typedef $$PaymentsTableCreateCompanionBuilder = PaymentsCompanion Function({
   Value<DateTime?> verifiedAt,
   Value<DateTime?> voidedAt,
   Value<String?> voidReason,
+  Value<String?> installmentId,
   Value<int> rowid,
 });
 typedef $$PaymentsTableUpdateCompanionBuilder = PaymentsCompanion Function({
@@ -9114,6 +9171,7 @@ typedef $$PaymentsTableUpdateCompanionBuilder = PaymentsCompanion Function({
   Value<DateTime?> verifiedAt,
   Value<DateTime?> voidedAt,
   Value<String?> voidReason,
+  Value<String?> installmentId,
   Value<int> rowid,
 });
 
@@ -9249,6 +9307,11 @@ class $$PaymentsTableFilterComposer
 
   ColumnFilters<String> get voidReason => $composableBuilder(
     column: $table.voidReason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get installmentId => $composableBuilder(
+    column: $table.installmentId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -9400,6 +9463,11 @@ class $$PaymentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get installmentId => $composableBuilder(
+    column: $table.installmentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$ReceivablesTableOrderingComposer get receivableId {
     final $$ReceivablesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -9477,6 +9545,11 @@ class $$PaymentsTableAnnotationComposer
 
   GeneratedColumn<String> get voidReason => $composableBuilder(
     column: $table.voidReason,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get installmentId => $composableBuilder(
+    column: $table.installmentId,
     builder: (column) => column,
   );
 
@@ -9601,6 +9674,7 @@ class $$PaymentsTableTableManager
                 Value<DateTime?> verifiedAt = const Value.absent(),
                 Value<DateTime?> voidedAt = const Value.absent(),
                 Value<String?> voidReason = const Value.absent(),
+                Value<String?> installmentId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PaymentsCompanion(
                 id: id,
@@ -9617,6 +9691,7 @@ class $$PaymentsTableTableManager
                 verifiedAt: verifiedAt,
                 voidedAt: voidedAt,
                 voidReason: voidReason,
+                installmentId: installmentId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -9635,6 +9710,7 @@ class $$PaymentsTableTableManager
                 Value<DateTime?> verifiedAt = const Value.absent(),
                 Value<DateTime?> voidedAt = const Value.absent(),
                 Value<String?> voidReason = const Value.absent(),
+                Value<String?> installmentId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PaymentsCompanion.insert(
                 id: id,
@@ -9651,6 +9727,7 @@ class $$PaymentsTableTableManager
                 verifiedAt: verifiedAt,
                 voidedAt: voidedAt,
                 voidReason: voidReason,
+                installmentId: installmentId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

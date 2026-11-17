@@ -127,8 +127,10 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/obligaciones/:id/abono',
-      builder: (_, s) =>
-          PaymentFormScreen(receivableId: s.pathParameters['id']!),
+      builder: (_, s) => PaymentFormScreen(
+        receivableId: s.pathParameters['id']!,
+        installmentId: s.uri.queryParameters['cuota'],
+      ),
     ),
     GoRoute(
       path: '/obligaciones/:id/plan',

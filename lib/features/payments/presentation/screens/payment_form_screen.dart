@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/money/money.dart';
 import '../../../../core/providers/repository_providers.dart';
+import '../../../installments/data/installments_repository.dart';
 import '../../../receivables/presentation/providers/receivables_providers.dart';
+import '../providers/payments_providers.dart';
 import '../../data/attachments_repository.dart';
 import '../../domain/payment_errors.dart';
 import '../../domain/payment_options.dart';
@@ -16,8 +18,15 @@ import '../../domain/payment_options.dart';
 /// Registrar un abono. Pocos toques: importe + Guardar (efectivo se confirma
 /// al instante; Yape/Plin/transferencia quedan por verificar por defecto).
 class PaymentFormScreen extends ConsumerStatefulWidget {
-  const PaymentFormScreen({super.key, required this.receivableId});
+  const PaymentFormScreen({
+    super.key,
+    required this.receivableId,
+    this.installmentId,
+  });
   final String receivableId;
+
+  /// Cuota preseleccionada (al tocarla en el detalle).
+  final String? installmentId;
 
   @override
   ConsumerState<PaymentFormScreen> createState() => _PaymentFormScreenState();
@@ -35,6 +44,13 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
   bool _confirmTouched = false;
   bool _saving = false;
   bool _prefilled = false;
+  String? _installmentId; // null = automático (cuota más antigua)
+
+  @override
+  void initState() {
+    super.initState();
+    _installmentId = widget.installmentId;
+  }
 
   @override
   void dispose() {
@@ -68,6 +84,24 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
     if (d != null) setState(() => _date = d);
   }
 
+  /// Sugiere el importe: lo que falta de la cuota elegida (o de la más
+  /// antigua con saldo); sin plan, el saldo total.
+  void _fillAmount(int balanceMinor, List<InstallmentView> open) {
+    InstallmentView? target;
+    for (final v in open) {
+      if (_installmentId == null || v.installment.id == _installmentId) {
+        target = v;
+        break;
+      }
+    }
+    final minor = target == null
+        ? balanceMinor
+        : (target.remainingMinor < balanceMinor
+              ? target.remainingMinor
+              : balanceMinor);
+    _amount.text = (minor / 100).toStringAsFixed(2);
+  }
+
   void _toast(String msg) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
 
@@ -85,6 +119,7 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
             reference: _reference.text,
             notes: _notes.text,
             confirmNow: _confirmNow,
+            installmentId: _installmentId,
           );
       var failed = 0;
       final attachments = ref.read(attachmentsRepositoryProvider);
@@ -125,9 +160,14 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
         .watch(balanceProvider(widget.receivableId))
         .asData
         ?.value;
-    if (!_prefilled && balance != null) {
+    final plan = ref.watch(installmentPlanProvider(widget.receivableId));
+    final open = [
+      for (final v in plan.asData?.value ?? const <InstallmentView>[])
+        if (v.remainingMinor > 0) v,
+    ];
+    if (!_prefilled && balance != null && plan.hasValue) {
       _prefilled = true;
-      _amount.text = (balance.balanceMinor / 100).toStringAsFixed(2);
+      _fillAmount(balance.balanceMinor, open);
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Registrar abono')),
@@ -143,9 +183,39 @@ class _PaymentFormScreenState extends ConsumerState<PaymentFormScreen> {
                   'Saldo pendiente: ${Money.minor(balance.balanceMinor).format()}',
                 ),
               ),
+            if (open.isNotEmpty) ...[
+              DropdownButtonFormField<String?>(
+                initialValue:
+                    open.any((v) => v.installment.id == _installmentId)
+                    ? _installmentId
+                    : null,
+                decoration: const InputDecoration(labelText: 'Aplicar a'),
+                items: [
+                  const DropdownMenuItem(
+                    value: null,
+                    child: Text('Automático (cuota más antigua)'),
+                  ),
+                  for (final v in open)
+                    DropdownMenuItem(
+                      value: v.installment.id,
+                      child: Text(
+                        'Cuota ${v.installment.sequence} · falta '
+                        '${Money.minor(v.remainingMinor).format()}',
+                      ),
+                    ),
+                ],
+                onChanged: (v) => setState(() {
+                  _installmentId = v;
+                  if (balance != null) _fillAmount(balance.balanceMinor, open);
+                }),
+              ),
+              const SizedBox(height: 16),
+            ],
             TextFormField(
               controller: _amount,
               autofocus: true,
+              enableSuggestions: false,
+              autocorrect: false,
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),

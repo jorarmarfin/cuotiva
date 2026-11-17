@@ -26,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -46,6 +46,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 3) {
         await m.createTable(settlements);
         await _createSettlementIndexes();
+      }
+      // Desde v1 `payments` ya se crea con la columna (createTable usa el esquema actual).
+      if (from >= 2 && from < 4) {
+        await m.addColumn(payments, payments.installmentId);
       }
     },
     beforeOpen: (details) async {

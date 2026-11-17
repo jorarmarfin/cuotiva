@@ -94,6 +94,7 @@ class PaymentsRepository {
     String? reference,
     String? notes,
     bool confirmNow = true,
+    String? installmentId,
   }) async {
     if (!amount.isPositive) {
       throw PaymentException('El importe debe ser mayor a cero');
@@ -117,6 +118,18 @@ class PaymentsRepository {
         );
       }
       await _ensureWithinBalance(receivableId, amount.minor, r.currency);
+      if (installmentId != null) {
+        final inst =
+            await (_db.select(_db.installments)..where(
+                  (i) =>
+                      i.id.equals(installmentId) &
+                      i.receivableId.equals(receivableId),
+                ))
+                .getSingleOrNull();
+        if (inst == null) {
+          throw PaymentException('La cuota no pertenece a la obligación');
+        }
+      }
 
       await _db
           .into(_db.payments)
@@ -133,6 +146,7 @@ class PaymentsRepository {
               status: Value(confirmNow ? 'confirmed' : 'pending_verification'),
               reference: Value(_clean(reference)),
               notes: Value(_clean(notes)),
+              installmentId: Value(installmentId),
               verifiedAt: Value(confirmNow ? now : null),
             ),
           );
@@ -145,6 +159,7 @@ class PaymentsRepository {
           'amountMinor': amount.minor,
           'method': method,
           'status': confirmNow ? 'confirmed' : 'pending_verification',
+          'installmentId': ?installmentId,
         },
       );
       if (confirmNow) await _allocations.reallocate(receivableId);

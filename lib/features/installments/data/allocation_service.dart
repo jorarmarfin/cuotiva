@@ -39,32 +39,71 @@ class AllocationService {
             .get();
 
     final remaining = [for (final i in installments) i.amountMinor];
-    var idx = 0;
     final now = _clock();
+
+    Future<void> apply(Payment p, int index, int take) async {
+      await _db
+          .into(_db.paymentAllocations)
+          .insert(
+            PaymentAllocationsCompanion.insert(
+              id: _uuid.v4(),
+              createdAt: now,
+              updatedAt: now,
+              paymentId: p.id,
+              installmentId: installments[index].id,
+              amountMinor: take,
+            ),
+          );
+      remaining[index] -= take;
+    }
+
+    // 1) Pagos dirigidos a una cuota: primero a esa cuota; lo que sobre cae
+    //    en el reparto automático.
+    final leftover = <Payment, int>{};
     for (final p in payments) {
       var left = p.amountMinor;
-      while (left > 0 && idx < installments.length) {
+      final target = installments.indexWhere((i) => i.id == p.installmentId);
+      if (target >= 0 && remaining[target] > 0) {
+        final take = left < remaining[target] ? left : remaining[target];
+        await apply(p, target, take);
+        left -= take;
+      }
+      if (left > 0) leftover[p] = left;
+    }
+    // 2) Resto y pagos automáticos: la cuota más antigua con saldo primero.
+    for (final p in payments) {
+      var left = leftover[p] ?? 0;
+      for (var idx = 0; left > 0 && idx < installments.length; idx++) {
+        if (remaining[idx] == 0) continue;
         final take = left < remaining[idx] ? left : remaining[idx];
-        if (take > 0) {
-          await _db
-              .into(_db.paymentAllocations)
-              .insert(
-                PaymentAllocationsCompanion.insert(
-                  id: _uuid.v4(),
-                  createdAt: now,
-                  updatedAt: now,
-                  paymentId: p.id,
-                  installmentId: installments[idx].id,
-                  amountMinor: take,
-                ),
-              );
+        final done = await _existing(p.id, installments[idx].id);
+        if (done != null) {
+          await (_db.update(
+            _db.paymentAllocations,
+          )..where((a) => a.id.equals(done.id))).write(
+            PaymentAllocationsCompanion(
+              amountMinor: Value(done.amountMinor + take),
+            ),
+          );
           remaining[idx] -= take;
-          left -= take;
+        } else {
+          await apply(p, idx, take);
         }
-        if (remaining[idx] == 0) idx++;
+        left -= take;
       }
     }
   }
+
+  Future<PaymentAllocation?> _existing(
+    String paymentId,
+    String installmentId,
+  ) =>
+      (_db.select(_db.paymentAllocations)..where(
+            (a) =>
+                a.paymentId.equals(paymentId) &
+                a.installmentId.equals(installmentId),
+          ))
+          .getSingleOrNull();
 
   Future<void> _clear(String receivableId) async {
     await _db.customStatement(

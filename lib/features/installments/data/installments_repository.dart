@@ -86,6 +86,9 @@ class InstallmentsRepository {
       '(SELECT id FROM installments WHERE receivable_id = ?)',
       [receivableId],
     );
+    await (_db.update(_db.payments)
+          ..where((p) => p.receivableId.equals(receivableId)))
+        .write(const PaymentsCompanion(installmentId: Value(null)));
     await (_db.delete(
       _db.installments,
     )..where((i) => i.receivableId.equals(receivableId))).go();

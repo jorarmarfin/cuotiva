@@ -257,6 +257,12 @@ class _PlanSection extends ConsumerWidget {
                       ? Text('Pagado ${Money.minor(v.paidMinor).format()}')
                       : null,
                   trailing: InstallmentStatusChip(v.status),
+                  onTap: cancelled || v.remainingMinor <= 0
+                      ? null
+                      : () => context.push(
+                          '/obligaciones/$receivableId/abono'
+                          '?cuota=${v.installment.id}',
+                        ),
                 ),
           ],
         );

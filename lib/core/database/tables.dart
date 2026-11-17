@@ -108,6 +108,9 @@ class Payments extends Table with BaseTable {
   DateTimeColumn get verifiedAt => dateTime().nullable()();
   DateTimeColumn get voidedAt => dateTime().nullable()();
   TextColumn get voidReason => text().nullable()();
+  // Cuota a la que el usuario dirigió el abono (opcional; sin FK: el plan se
+  // reemplaza completo y el destino se limpia). Null = reparto automático.
+  TextColumn get installmentId => text().nullable()();
 
   @override
   List<String> get customConstraints => [

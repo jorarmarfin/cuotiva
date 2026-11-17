@@ -9,18 +9,18 @@ void main() {
 
   setUpAll(() => verifier = SchemaVerifier(GeneratedHelper()));
 
-  test('v1 → v2: el esquema resultante coincide con el esperado', () async {
-    final connection = await verifier.startAt(1);
+  test('v3 → v4: agrega payments.installment_id', () async {
+    final connection = await verifier.startAt(3);
     final db = AppDatabase(connection);
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 2);
+    await verifier.migrateAndValidate(db, 4);
   });
 
-  test('v1 → v3 y v2 → v3: el esquema coincide con el esperado', () async {
+  test('v1 → v4, v2 → v4: el esquema coincide con el esperado', () async {
     for (final from in [1, 2]) {
       final connection = await verifier.startAt(from);
       final db = AppDatabase(connection);
-      await verifier.migrateAndValidate(db, 3);
+      await verifier.migrateAndValidate(db, 4);
       await db.close();
     }
   });
@@ -46,7 +46,7 @@ void main() {
 
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, 4);
 
     final receivables = await db.select(db.receivables).get();
     expect(receivables.single.principalMinor, 12000);
@@ -99,7 +99,7 @@ void main() {
 
     final db = AppDatabase(schema.newConnection());
     addTearDown(db.close);
-    await verifier.migrateAndValidate(db, 3);
+    await verifier.migrateAndValidate(db, 4);
 
     expect((await db.select(db.payments).get()).single.amountMinor, 60000);
     expect(await db.select(db.auditLogs).get(), hasLength(1));

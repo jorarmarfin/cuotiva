@@ -61,11 +61,7 @@ class InstallmentsRepository {
   }
 
   Stream<List<InstallmentView>> watchPlan(String receivableId) => _db
-      .customSelect(
-        'SELECT 1',
-        readsFrom: {_db.installments, _db.paymentAllocations, _db.payments},
-      )
-      .watch()
+      .watchTables({_db.installments, _db.paymentAllocations, _db.payments})
       .asyncMap((_) => plan(receivableId));
 
   /// Reemplaza el plan completo. La suma debe ser exactamente el importe de

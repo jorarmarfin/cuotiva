@@ -209,4 +209,58 @@ void main() {
       containsAll(['set_installment_plan', 'clear_installment_plan']),
     );
   });
+  test(
+    'watchPlan emite el plan nuevo al definirlo (la UI se refresca sola)',
+    () async {
+      final emissions = <int>[];
+      final sub = installments
+          .watchPlan(r.id)
+          .listen((v) => emissions.add(v.length));
+      await pumpEventQueue();
+      expect(emissions.last, 0);
+
+      await installments.setPlan(
+        r.id,
+        InstallmentPlanner.even(
+          principalMinor: 12000,
+          count: 3,
+          firstDue: DateTime(2026, 12, 1),
+        ),
+      );
+      await pumpEventQueue(times: 50);
+      expect(emissions.last, 3, reason: 'emisiones: $emissions');
+
+      await installments.clearPlan(r.id);
+      await pumpEventQueue(times: 50);
+      expect(emissions.last, 0, reason: 'emisiones: $emissions');
+      await sub.cancel();
+    },
+  );
+  test(
+    'streams con distintas tablas no se pisan entre sí (misma consulta base)',
+    () async {
+      // Otro stream activo, con tablas distintas, registrado ANTES que el del plan.
+      final other = db
+        .customSelect('SELECT 1', readsFrom: {db.receivables})
+        .watch()
+        .listen((_) {});
+      final emissions = <int>[];
+      final sub = installments
+          .watchPlan(r.id)
+          .listen((v) => emissions.add(v.length));
+      await pumpEventQueue();
+      await installments.setPlan(
+        r.id,
+        InstallmentPlanner.even(
+          principalMinor: 12000,
+          count: 2,
+          firstDue: DateTime(2026, 12, 1),
+        ),
+      );
+      await pumpEventQueue(times: 50);
+      expect(emissions.last, 2, reason: 'emisiones: $emissions');
+      await sub.cancel();
+      await other.cancel();
+    },
+  );
 }

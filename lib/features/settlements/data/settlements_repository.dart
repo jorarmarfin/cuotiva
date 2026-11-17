@@ -69,11 +69,9 @@ class SettlementsRepository {
 
   /// Se re-emite al cambiar pagos o entregas.
   Stream<SettlementSummary> watchSummary(String collectionId) {
-    final q = _db.customSelect(
-      'SELECT 1',
-      readsFrom: {_db.payments, _db.settlements, _db.receivables},
-    );
-    return q.watch().asyncMap((_) => summaryOf(collectionId));
+    return _db
+        .watchTables({_db.payments, _db.settlements, _db.receivables})
+        .asyncMap((_) => summaryOf(collectionId));
   }
 
   /// Registra una entrega. Bloquea entregas mayores a lo pendiente por entregar.

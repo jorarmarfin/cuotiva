@@ -71,13 +71,11 @@ class BalancesRepository {
   }
 
   Stream<Map<String, Balance>> watchCollection(String collectionId) => _db
-      .customSelect('SELECT 1', readsFrom: {_db.receivables, _db.payments})
-      .watch()
+      .watchTables({_db.receivables, _db.payments})
       .asyncMap((_) => forCollection(collectionId));
 
   Stream<Balance?> watchReceivable(String receivableId) => _db
-      .customSelect('SELECT 1', readsFrom: {_db.receivables, _db.payments})
-      .watch()
+      .watchTables({_db.receivables, _db.payments})
       .asyncMap((_) => forReceivable(receivableId));
 
   /// Totales globales o de un espacio (dashboard). Excluye cobros archivados.
@@ -96,11 +94,7 @@ class BalancesRepository {
   }
 
   Stream<CollectionTotals> watchTotals({String? spaceId}) => _db
-      .customSelect(
-        'SELECT 1',
-        readsFrom: {_db.receivables, _db.payments, _db.collections},
-      )
-      .watch()
+      .watchTables({_db.receivables, _db.payments, _db.collections})
       .asyncMap((_) => totals(spaceId: spaceId));
 
   /// Próximos vencimientos (y vencidos), del más antiguo al más reciente.
@@ -194,17 +188,13 @@ class BalancesRepository {
     int withinDays = 30,
     int limit = 10,
   }) => _db
-      .customSelect(
-        'SELECT 1',
-        readsFrom: {
-          _db.receivables,
-          _db.payments,
-          _db.installments,
-          _db.paymentAllocations,
-          _db.collections,
-        },
-      )
-      .watch()
+      .watchTables({
+        _db.receivables,
+        _db.payments,
+        _db.installments,
+        _db.paymentAllocations,
+        _db.collections,
+      })
       .asyncMap(
         (_) =>
             upcomingDue(spaceId: spaceId, withinDays: withinDays, limit: limit),
@@ -232,10 +222,6 @@ class BalancesRepository {
   }
 
   Stream<Map<String, CollectionTotals>> watchTotalsByCollection() => _db
-      .customSelect(
-        'SELECT 1',
-        readsFrom: {_db.receivables, _db.payments, _db.collections},
-      )
-      .watch()
+      .watchTables({_db.receivables, _db.payments, _db.collections})
       .asyncMap((_) => totalsByCollection());
 }

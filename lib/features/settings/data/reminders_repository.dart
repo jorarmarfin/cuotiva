@@ -8,17 +8,13 @@ class RemindersRepository {
 
   /// Se re-emite cuando cambian datos que afectan a los recordatorios.
   Stream<void> watchChanges() => _db
-      .customSelect(
-        'SELECT 1',
-        readsFrom: {
-          _db.payments,
-          _db.installments,
-          _db.receivables,
-          _db.collections,
-          _db.contacts,
-        },
-      )
-      .watch()
+      .watchTables({
+        _db.payments,
+        _db.installments,
+        _db.receivables,
+        _db.collections,
+        _db.contacts,
+      })
       .map((_) {});
 
   Future<List<DueItem>> dueItems() async {

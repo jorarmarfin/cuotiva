@@ -83,3 +83,19 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 }
+
+extension WatchTables on AppDatabase {
+  /// Emite cuando cambia cualquiera de [tables].
+  ///
+  /// Drift reutiliza un mismo stream para consultas con idéntico SQL y
+  /// argumentos, IGNORANDO `readsFrom`: dos `customSelect('SELECT 1')` con
+  /// tablas distintas compartían el primer conjunto y el segundo dejaba de
+  /// refrescarse. Por eso el SQL lleva el nombre de las tablas.
+  Stream<void> watchTables(Set<TableInfo<Table, Object?>> tables) {
+    final names = tables.map((t) => t.actualTableName).toList()..sort();
+    return customSelect(
+      'SELECT 1 /* ${names.join(',')} */',
+      readsFrom: tables,
+    ).watch().map((_) {});
+  }
+}

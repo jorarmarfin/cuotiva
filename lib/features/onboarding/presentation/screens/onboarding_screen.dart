@@ -166,6 +166,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           counterText: '',
                         ),
                       ),
+                      const SizedBox(height: 16),
                       TextField(
                         controller: _pin2,
                         obscureText: true,

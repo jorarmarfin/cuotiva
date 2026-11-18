@@ -19,7 +19,9 @@ class PdfPreviewScaffold extends StatelessWidget {
   });
 
   final String title;
-  final String fileName;
+
+  /// Se evalúa al compartir: el nombre depende de los datos ya cargados.
+  final String Function() fileName;
   final Future<Uint8List> Function() buildPdf;
   final Widget? controls;
 
@@ -49,7 +51,8 @@ class PdfPreviewScaffold extends StatelessWidget {
       ),
     );
     if (ok != true) return;
-    await sharePdf(await buildPdf(), fileName);
+    final bytes = await buildPdf();
+    await sharePdf(bytes, fileName());
   }
 
   @override
@@ -76,7 +79,7 @@ class PdfPreviewScaffold extends StatelessWidget {
             canChangePageFormat: false,
             canDebug: false,
             useActions: false,
-            pdfFileName: '$fileName.pdf',
+            pdfFileName: '${fileName()}.pdf',
           ),
         ),
       ],

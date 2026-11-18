@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/pdf/pdf_builders.dart';
+import '../../../../core/pdf/pdf_logo.dart';
 import '../../../../core/providers/repository_providers.dart';
+import '../../../../core/utils/slug.dart';
 import '../../domain/report_models.dart';
 import '../widgets/pdf_preview_scaffold.dart';
 
@@ -17,7 +19,7 @@ class StatementPreviewScreen extends ConsumerStatefulWidget {
 
 class _State extends ConsumerState<StatementPreviewScreen> {
   var _options = const StatementOptions();
-  var _name = 'estado_de_cuenta';
+  var _name = 'estado-de-cuenta';
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class _State extends ConsumerState<StatementPreviewScreen> {
         );
     return PdfPreviewScaffold(
       title: 'Estado de cuenta',
-      fileName: _name,
+      fileName: () => _name,
       rebuildKey: _options,
       controls: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -71,8 +73,15 @@ class _State extends ConsumerState<StatementPreviewScreen> {
               widget.receivableId,
               includeAttachments: _options.includeAttachments,
             );
-        _name = 'estado_de_cuenta_${data.personName}';
-        return buildStatementPdf(data, options: _options);
+        _name = reportFileName('estado-de-cuenta', [
+          data.collectionTitle,
+          data.personName,
+        ]);
+        return buildStatementPdf(
+          data,
+          options: _options,
+          logo: await loadPdfLogo(),
+        );
       },
     );
   }

@@ -24,37 +24,46 @@ String _m(int minor, String currency) =>
     pdfSafe(Money.minor(minor, currency: currency).format());
 String _d(DateTime d) => DateFormat('dd/MM/yyyy').format(d);
 
-pw.Widget _header(String title, String subtitle) => pw.Column(
-  crossAxisAlignment: pw.CrossAxisAlignment.start,
-  children: [
-    pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+pw.Widget _header(String title, String subtitle, {Uint8List? logo}) =>
+    pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(
-          'Cuotiva',
-          style: const pw.TextStyle(
-            color: _brand,
-            fontSize: 20,
-            fontWeight: pw.FontWeight.bold,
-          ),
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [
+            pw.Row(
+              children: [
+                if (logo != null) ...[
+                  pw.Image(pw.MemoryImage(logo), width: 34, height: 34),
+                  pw.SizedBox(width: 8),
+                ],
+                pw.Text(
+                  'Cuotiva',
+                  style: const pw.TextStyle(
+                    color: _brand,
+                    fontSize: 20,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            pw.Text(
+              pdfSafe(title),
+              style: const pw.TextStyle(
+                fontSize: 14,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+          ],
         ),
+        pw.SizedBox(height: 2),
         pw.Text(
-          pdfSafe(title),
-          style: const pw.TextStyle(
-            fontSize: 14,
-            fontWeight: pw.FontWeight.bold,
-          ),
+          pdfSafe(subtitle),
+          style: const pw.TextStyle(color: _muted, fontSize: 10),
         ),
+        pw.Divider(color: _line),
       ],
-    ),
-    pw.SizedBox(height: 2),
-    pw.Text(
-      pdfSafe(subtitle),
-      style: const pw.TextStyle(color: _muted, fontSize: 10),
-    ),
-    pw.Divider(color: _line),
-  ],
-);
+    );
 
 pw.Widget _kv(String k, String v, {bool bold = false}) => pw.Padding(
   padding: const pw.EdgeInsets.symmetric(vertical: 2),
@@ -129,6 +138,7 @@ Future<Uint8List> buildStatementPdf(
   StatementData s, {
   StatementOptions options = const StatementOptions(),
   bool compress = true,
+  Uint8List? logo,
 }) async {
   final doc = pw.Document(
     title: 'Estado de cuenta',
@@ -141,7 +151,7 @@ Future<Uint8List> buildStatementPdf(
       pageTheme: _pageTheme(),
       footer: (ctx) => _footer(ctx, s.issuedAt),
       build: (ctx) => [
-        _header('Estado de cuenta', s.spaceName),
+        _header('Estado de cuenta', s.spaceName, logo: logo),
         _kv('Persona', s.personName),
         if (options.includePhone && s.phone != null) _kv('Teléfono', s.phone!),
         _kv('Concepto', s.collectionTitle),
@@ -228,6 +238,7 @@ Future<Uint8List> buildStatementPdf(
 Future<Uint8List> buildCampaignPdf(
   CampaignReportData c, {
   bool compress = true,
+  Uint8List? logo,
 }) async {
   final doc = pw.Document(
     title: 'Reporte de cobro',
@@ -239,7 +250,7 @@ Future<Uint8List> buildCampaignPdf(
       pageTheme: _pageTheme(),
       footer: (ctx) => _footer(ctx, c.issuedAt),
       build: (ctx) => [
-        _header('Reporte de cobro', '${c.spaceName} - ${c.title}'),
+        _header('Reporte de cobro', '${c.spaceName} - ${c.title}', logo: logo),
         _kv('Participantes', '${c.participants.length}'),
         _kv('Comprometido', _m(c.committedMinor, 'PEN')),
         _kv('Recaudado', _m(c.collectedMinor, 'PEN')),

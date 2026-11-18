@@ -5,6 +5,7 @@ import 'package:cuotiva/core/database/app_database.dart';
 import 'package:cuotiva/core/database/audit_service.dart';
 import 'package:cuotiva/core/money/money.dart';
 import 'package:cuotiva/core/pdf/pdf_builders.dart';
+import 'package:cuotiva/core/pdf/pdf_logo.dart';
 import 'package:cuotiva/core/pdf/pdf_text.dart';
 import 'package:cuotiva/features/collections/data/collections_repository.dart';
 import 'package:cuotiva/features/contacts/data/contacts_repository.dart';
@@ -253,5 +254,33 @@ void main() {
     final without = await buildStatementPdf(data, compress: false);
     expect(text(withImg), contains('Comprobantes'));
     expect(text(without), isNot(contains('Comprobantes')));
+  });
+
+  test('el logo se incluye en el PDF y se reduce de tamaño', () async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final logo = await loadPdfLogo();
+    expect(logo, isNotNull);
+    final small = img.decodePng(logo!)!;
+    expect(small.width, 160);
+    expect(logo.length, lessThan(100 * 1024));
+
+    final data = StatementData(
+      spaceName: 'Negocio',
+      collectionTitle: 'Buzos',
+      personName: 'Rosa',
+      currency: 'PEN',
+      principalMinor: 12000,
+      confirmedMinor: 0,
+      balanceMinor: 12000,
+      statusLabel: 'Pendiente',
+      confirmed: const [],
+      pending: const [],
+      installments: const [],
+      issuedAt: DateTime(2026, 11, 17),
+    );
+    final con = await buildStatementPdf(data, compress: false, logo: logo);
+    final sin = await buildStatementPdf(data, compress: false);
+    expect(latin1.decode(con), contains('/Subtype/Image'));
+    expect(latin1.decode(sin), isNot(contains('/Subtype/Image')));
   });
 }

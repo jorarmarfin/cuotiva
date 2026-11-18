@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Sin publicar]
+
+## [1.1.0+2] - 2026-11-17
 ### Añadido
 - Botón «Ir al inicio» en las pantallas abiertas: cierra todas las ventanas apiladas de una vez.
 - PDF: nombre de archivo con el título del cobro y la persona (`estado-de-cuenta_cobro_persona.pdf`) y logo de Cuotiva en el encabezado.
